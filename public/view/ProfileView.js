@@ -20,19 +20,24 @@ export class ProfileView extends AbstractView {
     async updateView() {
         console.log('ProfileView.updateView() called');
         const viewWrapper = document.createElement('div');
-        viewWrapper.innerHTML = `
+        const response = await fetch('/view/templates/profile.html', {cache: 'no-store'}); //to use await functin must be async
+        viewWrapper.innerHTML = await response.text();
+        const profileContent = document.createElement('div');
+        profileContent.innerHTML = `
             <h1>Profile</h1>
             <p>Welcome to your profile page.</p>
             <p>Email: ${currentUser.email}</p>
             <p>User UID: ${currentUser.uid}</p>
         `;
-        
+        viewWrapper.appendChild(profileContent);
         
         return viewWrapper;
     }
 
     attachEvents() {
         console.log('ProfileView.attachEvents() called');
+        const backHomeButton = document.getElementById('backHomeButton');
+        backHomeButton.onclick = this.controller.onClickBackHomeButton;
     }
 
     async onLeave() {

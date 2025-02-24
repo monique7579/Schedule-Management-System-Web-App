@@ -6,8 +6,8 @@ import { Router } from "./Router.js";
 import {createAccount, loginFirebase, logoutFirebase} from './firebase_auth.js'
 import { startSpinner, stopSpinner } from "../view/util.js";
 
-document.getElementById('appHeader').textContent = 'Cloud Web Template'; //changes element between ><
-document.title = 'App Template'; //changes title
+// document.getElementById('appHeader').textContent = 'Aurgury App'; //changes element between ><
+document.title = 'Augury'; //changes title
 
 const routes = [
     {path: '/', view: HomeView, controller: HomeController},

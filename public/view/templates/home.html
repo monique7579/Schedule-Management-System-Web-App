@@ -1,11 +1,80 @@
-<button id="generateDataButton" class = "btn btn-outline-info">Generate Table Data</button>
-<table class="table table-striped">
-    <thead>
-        <tr>
-            <th>N</th>
-            <th>N<sup>2</sup></th>
-            <th>N<sup>3</sup></th>
-        </tr>
-    </thead>
-    <tbody></tbody>
-</table>
+<div class="container">
+    <div class="left">
+        <div class="calendar">
+            <div class="month">
+                <i class="bi bi-chevron-left"></i>
+                <div class="date">febuary 2025</div>
+                <i class="bi bi-chevron-right"></i>
+            </div>
+            <div class="weekdays">
+                <div>Sun</div>
+                <div>Mon</div>
+                <div>Tue</div>
+                <div>Wed</div>
+                <div>Thu</div>
+                <div>Fri</div>
+                <div>Sat</div>
+            </div>
+            <div class="days"></div>
+            <div class="goto-today">
+                <div class="goto">
+                    <input type="text" placeholder="mm/yyyy" class="date-input form-control" />
+                    <button class="btn goto-btn btn-clay">Go</button>
+                </div>
+                <button class="today-btn btn btn-clay">Today</button>
+            </div>
+        </div>
+    </div>
+    <div class="right">
+        <div class="today-date">
+            <div class="event-day">wed</div>
+            <div class="event-date">27th febuary 2025</div>
+        </div>
+        <div class="events">
+            <div class="add-event-wrapper">
+                <div class="add-event-header">
+                    <div class="title">Add Event</div>
+                    <i class="bi bi-x"></i>
+                </div>
+                <div class="add-event-body">
+                    <div class="add-event-input">
+                        <input type="text" placeholder="Event Title" class="event-title form-control" />
+                    </div>
+                    <div class="add-event-input">
+                        <input type="text" placeholder="Event Category" class="event-category form-control" />
+                    </div>
+                    <div class="add-event-input">
+                        <input type="text" placeholder="Event Type" class="event-type form-control" />
+                    </div>
+                    <div class="add-event-input">
+                        <input type="text" placeholder="Event Date" class="event-date form-control" />
+                    </div>
+                    <div class="add-event-input">
+                        <input type="text" placeholder="Event Start Time" class="event-start-time form-control" />
+                    </div>
+                    <div class="add-event-input">
+                        <input type="text" placeholder="Event Finish Time" class="event-finish-time form-control" />
+                    </div>
+                    <div class="add-event-input">
+                        <input type="text" placeholder="Event Repeat" class="event-repeat form-control" />
+                    </div>
+                    <div class="add-event-input">
+                        <input type="text" placeholder="Event Reminder" class="event-reminder form-control" />
+                    </div>
+                    <div class="add-event-input">
+                        <input type="text" placeholder="Event Location" class="event-location form-control" />
+                    </div>
+                    <div class="add-event-input">
+                        <input type="text" placeholder="Event Description" class="event-description form-control" />
+                    </div>
+                    <div class="add-event-footer">
+                        <button class="add-event-btn btn btn-clay">Add Event</button>
+                    </div>
+                </div>
+            </div>
+            <button class="btn-add-event btn btn-clay">
+                <i class="bi bi-plus"></i> Create Event
+            </button>
+        </div>
+    </div>
+</div>

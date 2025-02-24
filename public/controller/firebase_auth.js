@@ -45,7 +45,7 @@ onAuthStateChanged(auth, user => {
         spaRoot.classList.replace('d-block','d-none');
         router.currentView = null;
         spaRoot.innerHTML = ''; //cleared view since we are signing out
-        glHomeModel.reset(); //reset when sign out
+        // glHomeModel.reset(); //reset when sign out
     }
 });
 

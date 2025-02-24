@@ -1,0 +1,11 @@
+.btn-clay {
+    /* background-color: #cc9674;  */
+    border-color: #cc9674; 
+    color: #cc9674;
+}
+
+.btn-clay:hover {
+    background-color: #cc9674; 
+    border-color: #cc9674; 
+    color: #fff;
+}

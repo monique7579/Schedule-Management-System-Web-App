@@ -1,4 +1,5 @@
 import { ProfileModel } from "../model/ProfileModel.js";
+import { router } from "./app.js";
 
 export class ProfileController {
     //instance members
@@ -11,5 +12,10 @@ export class ProfileController {
 
     setView(view) {
         this.view = view;
+    }
+    
+    onClickBackHomeButton() {
+        console.log('back home button called');
+        router.navigate('/');
     }
 }
