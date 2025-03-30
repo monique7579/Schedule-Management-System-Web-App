@@ -56,13 +56,13 @@
                 <div class="day">29</div>
                 <div class="day">30</div>
             </div>
-            <div class="goto-today">
+            <!-- <div class="goto-today">
                 <div class="goto">
                     <input type="text" placeholder="mm/yyyy" class="date-input form-control" />
                     <button class="btn goto-btn btn-clay">Go</button>
                 </div>
                 <button class="today-btn btn btn-clay">Today</button>
-            </div>
+            </div> -->
         </div>
     </div>
     <div class="right">
@@ -76,7 +76,7 @@
                     <div class="title">Add Event</div>
                     <i class="bi bi-x"></i>
                 </div>
-                <div class="add-event-body">
+                <!-- <div class="add-event-body">
                     <div class="add-event-input">
                         <input type="text" placeholder="Event Title" class="event-title form-control" />
                     </div>
@@ -110,11 +110,66 @@
                     <div class="add-event-footer">
                         <button class="add-event-btn btn btn-clay">Add Event</button>
                     </div>
-                </div>
+                </div> -->
             </div>
-            <button class="btn-add-event btn btn-clay">
+            <button type="button" class="btn-add-event btn btn-clay" data-bs-toggle="modal" data-bs-target="#exampleModal">
                 <i class="bi bi-plus"></i> Create Event
             </button>
+
+            <!-- Modal -->
+            <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+                aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h1 class="modal-title fs-5" id="exampleModalLabel">Add Event</h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <!-- <div class="modal-body"> -->
+                        <div class="add-event-body">
+                            <div class="add-event-input">
+                                <input type="text" placeholder="Event Title" class="event-title form-control" />
+                            </div>
+                            <div class="add-event-input">
+                                <input type="text" placeholder="Event Category" class="event-category form-control" />
+                            </div>
+                            <div class="add-event-input">
+                                <input type="text" placeholder="Event Type" class="event-type form-control" />
+                            </div>
+                            <div class="add-event-input">
+                                <input type="text" placeholder="Event Date" class="event-date form-control" />
+                            </div>
+                            <div class="add-event-input">
+                                <input type="text" placeholder="Event Start Time"
+                                    class="event-start-time form-control" />
+                            </div>
+                            <div class="add-event-input">
+                                <input type="text" placeholder="Event Finish Time"
+                                    class="event-finish-time form-control" />
+                            </div>
+                            <div class="add-event-input">
+                                <input type="text" placeholder="Event Repeat" class="event-repeat form-control" />
+                            </div>
+                            <div class="add-event-input">
+                                <input type="text" placeholder="Event Reminder" class="event-reminder form-control" />
+                            </div>
+                            <div class="add-event-input">
+                                <input type="text" placeholder="Event Location" class="event-location form-control" />
+                            </div>
+                            <div class="add-event-input">
+                                <input type="text" placeholder="Event Description"
+                                    class="event-description form-control" />
+                            </div>
+
+                        </div>
+                        <!-- </div> -->
+                        <div class="add-event-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button class="add-event-btn btn btn-clay">Add Event</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
