@@ -117,16 +117,16 @@
             </button>
 
             <!-- Modal -->
-            <div class="modal fade" id="modal-add-event" tabindex="-1" aria-labelledby="exampleModalLabel"
+            <div class="modal fade" id="modal-add-event" tabindex="-1" aria-labelledby="modal-add-event-label"
                 aria-hidden="true">
                 <div class="modal-dialog">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h1 class="modal-title fs-5" id="exampleModalLabel">Add Event</h1>
+                            <h1 class="modal-title fs-5" id="modal-add-event-label">Add Event</h1>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <!-- <div class="modal-body"> -->
-                        <div class="add-event-body">
+                        <div class="modal-body add-event-body">
                             <div class="add-event-input">
                                 <input type="text" placeholder="Event Title" class="event-title form-control" />
                             </div>
@@ -138,6 +138,10 @@
                             </div>
                             <div class="add-event-input">
                                 <input type="text" placeholder="Event Date" class="event-date form-control" />
+                            </div>
+                            <div class="add-event-input">
+                                <h5>Start</h5>
+                                <input type="datetime-local" placeholder="Event Date" class="event-date form-control" />
                             </div>
                             <div class="add-event-input">
                                 <input type="text" placeholder="Event Start Time"
@@ -163,7 +167,7 @@
 
                         </div>
                         <!-- </div> -->
-                        <div class="add-event-footer">
+                        <div class="modal-footer add-event-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                             <button class="add-event-btn btn btn-clay">Add Event</button>
                         </div>

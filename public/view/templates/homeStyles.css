@@ -20,7 +20,7 @@ html, body {
     position: fixed;
     top: 0;
     left: 0;
-    z-index: 1000;
+    z-index: 0; /*careful!! this will cover other elements*/
     padding: 10px 0;
 }
 /* #navMenuContainer .container .d-block {
@@ -198,6 +198,6 @@ body {
 .calendar .days .active.event {
     padding-bottom: 10px;
 }
-.calendar .goto-today {
-
+.add-event-input {
+    padding: 5px;
 }

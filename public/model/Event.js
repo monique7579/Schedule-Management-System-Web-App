@@ -28,7 +28,7 @@ export class Event {
         this.docId = docId;
     }
 
-    toFirestore() {
+    toFirestore() { //this function converts the data of the model into something the firestore database understands /can store
         return {
             uid: this.uid,
             title: this.title,

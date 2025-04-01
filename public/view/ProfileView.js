@@ -17,7 +17,7 @@ export class ProfileView extends AbstractView {
         console.log('ProfileView.onMount() called');
     }
 
-    async updateView() {
+    async updateView() { 
         console.log('ProfileView.updateView() called');
         const viewWrapper = document.createElement('div');
         const response = await fetch('/view/templates/profile.html', {cache: 'no-store'}); //to use await functin must be async
@@ -32,12 +32,16 @@ export class ProfileView extends AbstractView {
         viewWrapper.appendChild(profileContent);
         
         return viewWrapper;
+
+        //note: anything that we want to render in profile i.e. usrname, email etc will be put hear
     }
 
-    attachEvents() {
+    attachEvents() { 
         console.log('ProfileView.attachEvents() called');
         const backHomeButton = document.getElementById('backHomeButton');
         backHomeButton.onclick = this.controller.onClickBackHomeButton;
+
+        //note: if there are any buttons we put in profile (i.e. change password etc) their listeners will be attached here
     }
 
     async onLeave() {

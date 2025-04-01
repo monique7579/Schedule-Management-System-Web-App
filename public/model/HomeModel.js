@@ -14,6 +14,7 @@ export class HomeModel {
 
     today = new Date();
     month = this.months[this.today.getMonth()];
+    year = this.today.getFullYear();
 
     
 }
