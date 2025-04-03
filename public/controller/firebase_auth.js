@@ -26,23 +26,25 @@ export async function logoutFirebase() {
 
 onAuthStateChanged(auth, user => {
     currentUser = user;
+    const authContainer = document.getElementById('authContainer');
+    const loginDiv = document.getElementById('loginDiv');
+    const navMenu = document.getElementById('navMenuContainer');
+    const spaRoot = document.getElementById('spaRoot');
+
     if(user) {
         console.log('Authstate changed: User logged in', user.email);
-        const loginDiv = document.getElementById('loginDiv');
         loginDiv.classList.replace('d-block','d-none');
-        const navMenu = document.getElementById('navMenuContainer');
         navMenu.classList.replace('d-none','d-block');
-        const spaRoot = document.getElementById('spaRoot');
         spaRoot.classList.replace('d-none','d-block');
+        authContainer.style.display = 'none'; //temp fix, tweak as needed
         router.navigate(window.location.pathname);
     } else {
-        console.log('Authstate changed: User logged out');
-        const loginDiv = document.getElementById('loginDiv');
+        console.log('Authstate changed: User logged out'); //this should also log on init load of the login page
         loginDiv.classList.replace('d-none','d-block');
-        const navMenu = document.getElementById('navMenuContainer');
         navMenu.classList.replace('d-block','d-none');
-        const spaRoot = document.getElementById('spaRoot');
         spaRoot.classList.replace('d-block','d-none');
+        authContainer.style.display = 'block'; //temp fix, tweak as needed
+
         router.currentView = null;
         spaRoot.innerHTML = ''; //cleared view since we are signing out
         // glHomeModel.reset(); //reset when sign out

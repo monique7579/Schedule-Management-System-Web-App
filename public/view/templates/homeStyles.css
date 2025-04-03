@@ -7,8 +7,8 @@ html, body {
     display: flex;
     /* flex-direction: column; */
 }
-#authContainer {
-    display: none !important;  /* Completely remove from layout when hidden */
+#authContainer { /* commented out !important for temp fix tweak as needed
+    display: none; /* !important;  /* Completely remove from layout when hidden */
     position: absolute; /* Avoid taking up space */
     top: 0;
     left: 0;
