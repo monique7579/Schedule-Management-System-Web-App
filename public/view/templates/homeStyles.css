@@ -8,11 +8,11 @@ html, body {
     /* flex-direction: column; */
 }
 #authContainer {
-    display: none !important;  /* Completely remove from layout when hidden */
-    position: absolute; /* Avoid taking up space */
-    top: 0;
+    /* display: none !important;  Completely remove from layout when hidden */
+    position: absolute; 
+    /* top: 0;
     left: 0;
-    width: 100%;
+    width: 100%; */
 }
 /* Navbar should always stay on top */
 #navMenuContainer {
@@ -20,19 +20,13 @@ html, body {
     position: fixed;
     top: 0;
     left: 0;
-    z-index: 0; /*careful!! this will cover other elements*/
+    z-index: 1; /*careful!! this will cover other elements*/
     padding: 10px 0;
 }
-/* #navMenuContainer .container .d-block {
-    height: 100px;
-} */
-
-/* Push the content down so it's not covered by the navbar */
-/* #contentWrapper {
-    margin-top: 60px;
-    flex-grow: 1;
-    display: flex;
-} */
+.dropdown-menu {
+    position: absolute;
+    z-index: 1000; /*makes it so that the profile drop down is above calendar*/
+}
 
 .btn-clay {
     /* background-color: #cc9674;  */
