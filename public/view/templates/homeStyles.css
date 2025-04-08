@@ -1,48 +1,47 @@
-/* things for nav */
-/* Ensure body takes full height */
+/* 
 html, body {
     height: 5%;
     margin: 0;
     padding: 0;
     display: flex;
-    /* flex-direction: column; */
+
 }
 #authContainer {
-    /* display: none !important;  Completely remove from layout when hidden */
+
     position: absolute; 
-    /* top: 0;
-    left: 0;
-    width: 100%; */
+    
 }
-/* Navbar should always stay on top */
+
 #navMenuContainer {
     width: 100%;
     position: fixed;
     top: 0;
     left: 0;
-    z-index: 1; /*careful!! this will cover other elements*/
+    z-index: 1;
     padding: 10px 0;
 }
 .dropdown-menu {
     position: absolute;
-    z-index: 1000; /*makes it so that the profile drop down is above calendar*/
+    z-index: 1000;
 }
-
+*/
 .btn-clay {
-    /* background-color: #cc9674;  */
+
     border-color: #cc9674;
     color: #cc9674;
-    /* padding: 3px; */
+
 }
 .btn-clay:hover {
     background-color: #cc9674;
     border-color: #cc9674;
     color: #fff;
 }
+
 :root {
     --primary-color: #cc9674;
     --light-color: #eec9b2;
 }
+/*
 * {
     margin: 0;
     padding: 0;
@@ -53,8 +52,9 @@ body {
     min-height: 100vh;
     display: flex;
     padding: 7%;
-    /* align-items: center; */
+  
 }
+
 .container {
     position: relative;
     width: 100%;
@@ -64,18 +64,20 @@ body {
     color: #fff;
     display: flex;
     border-radius: 10px;
-    /* bg color? */
 }
+*/
 .left {
     width: 20%;
     padding: 20px;
-    border-right: 1px solid var(--light-color);
+    border-right: 4px double var(--light-color);
 }
+
 .center {
     width: 80%;
     padding: 20px;
-    border-right: 1px solid var(--light-color);
+    border-right: 4px double var(--light-color);
 }
+/*
 .right {
     width: 20%;
     padding: 20px;
@@ -194,4 +196,32 @@ body {
 }
 .add-event-input {
     padding: 5px;
+} */
+
+.calendar-day {
+    width: 90px; /* or 14.28%*/
+    position: relative;
+    height: 90px;
+    display: flex;
+    padding: 4px 6px;
+    justify-content: right;
+    cursor: pointer;
+    color: var(--primary-color);
+    border: 1px solid var(--light-color);
+}
+.calendar-day-prev {
+    width: 90px; /* or 14.28%*/
+    position: relative;
+    height: 90px;
+    display: flex;
+    padding: 4px 6px;
+    justify-content: right;
+    cursor: pointer;
+}
+.calendar-header {
+    width: 90px;
+    justify-content: center;
+    position: relative;
+    color: var(--primary-color);
+    /* border: 1px solid var(--light-color); */
 }
