@@ -28,8 +28,11 @@ export class HomeView extends AbstractView {
         //to do: call render calendar and categories functions
         const left = this.buildCategoryColumn();
         viewWrapper.appendChild(left);
-        const view = this.buildCalendar(); //call function to render calendar
+        const currentDate = new Date(); //get date
+        const view = this.buildCalendar(currentDate); //call function to render calendar
         viewWrapper.appendChild(view);
+        const right = this.buildEventColumn();
+        viewWrapper.appendChild(right);
 
         return viewWrapper;
     }
@@ -47,13 +50,57 @@ export class HomeView extends AbstractView {
         return categoryColumn;
     }
 
+    buildEventColumn() {
+        console.log('HomeView.buildEventColumn()) called');
+        const eventColumn = document.createElement('div');
+        eventColumn.classList.add('right');
+        const eventHeader = document.createElement('div');
+        eventHeader.classList.add('d-flex', 'align-items-center',);
+        const title = document.createElement('h4');
+        title.innerHTML = "Upcoming";
+        title.classList.add('clay-txt');
+        eventHeader.appendChild(title);
+        const searchButton = document.createElement('button');
+        searchButton.classList.add('btn-clay', 'btn', 'm-2');
+        searchButton.innerHTML = '<i class="bi bi-search"></i>';
+        eventHeader.appendChild(searchButton);
+        eventColumn.appendChild(eventHeader);
+
+        // const events = this.renderEventList(); //i need event list before I can call this
+        // eventColumn.appendChild(events);
+
+        const addEvent = document.createElement('button');
+        addEvent.classList.add('btn-clay', 'btn');
+        addEvent.innerHTML = 'Add Event';
+        eventColumn.appendChild(addEvent);
+
+        return eventColumn;
+    }
+
+    renderEventList() {
+        const list = document.createElement('div');
+        list.id = 'eventList';
+        
+        if (this.controller.model.eventList.length === 0) {
+            const noData = document.createElement('div');
+            noData.innerHTML = '<h5>No upcoming events</h5>';
+            list.appendChild(noData);
+        } else {
+            for (const event of this.controller.model.eventList) {
+                const card = this.createCard(event);
+                list.appendChild(card);
+            }
+        }
+        return list;
+    }
+
     //to do: create function that renders calendar (called in update view)
-    buildCalendar() {
+    buildCalendar(currentDate) {
         console.log('HomeView.buildCalendar() called');
         const calendar = document.createElement('div');
-        calendar.classList.add('center');
+        calendar.classList.add('center',);
 
-        const currentDate = new Date(); //get date
+        // const currentDate = new Date(); //get date
         const currentMonth = currentDate.getMonth(); //get month from date
         const currentYear = currentDate.getFullYear(); //get year from date
 
@@ -62,6 +109,34 @@ export class HomeView extends AbstractView {
         // console.log(firstDay); //testing
         // console.log(daysInMonth);
         // console.log('current date', currentDate, 'currentMonth', currentMonth, 'current year', currentYear);
+        const months = ["January", "February", "March", "April", "May", "June",
+                        "July", "August", "September", "October", "November", "December"];
+
+        const monthLabelRow = document.createElement('div'); //for prev, next buttons and month label
+        monthLabelRow.classList.add('row', 'mb-3');
+        //prev button vv
+        const prevMonthBtnCol = document.createElement('div'); //create div for btn
+        prevMonthBtnCol.classList.add('col-1', 'text-center', 'calendar-header'); //center it
+        const prevMonthBtn = document.createElement('button'); //create btn element
+        prevMonthBtn.classList.add('btn-clay', 'btn'); //style btn
+        prevMonthBtn.innerHTML = `<i class="bi bi-chevron-left"></i>`; //arrow on btn
+        prevMonthBtnCol.appendChild(prevMonthBtn); //add btn to div
+        monthLabelRow.appendChild(prevMonthBtnCol); //add div to row
+        //month label
+        const monthLabel = document.createElement('div'); //create div for label
+        monthLabel.classList.add('col-5', 'text-center', 'fw-bold', 'calendar-month-label', 'fs-2'); //style
+        monthLabel.textContent = months[currentMonth]; //add label
+        monthLabelRow.appendChild(monthLabel); //append label
+        //next month button, same process as prev button
+        const nextMonthBtnCol = document.createElement('div'); 
+        nextMonthBtnCol.classList.add('col-1','text-center', 'calendar-header');
+        const nextMonthBtn = document.createElement('button');
+        nextMonthBtn.classList.add('btn-clay', 'btn');
+        nextMonthBtn.innerHTML = `<i class="bi bi-chevron-right"></i>`;
+        nextMonthBtnCol.appendChild(nextMonthBtn);
+        monthLabelRow.appendChild(nextMonthBtnCol);
+
+        calendar.appendChild(monthLabelRow); //append the month label row to the calendar
 
         const weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']; 
         const headerRow = document.createElement('div'); //set up days up the week place
@@ -93,9 +168,12 @@ export class HomeView extends AbstractView {
         // add rest of days
         while (dayCounter <= daysInMonth) {
             for (let i = 0; i < 7; i++) {
-                if (dayCounter > daysInMonth) break;
-                currentRow.push(`<div class="col-1 calendar-day">${dayCounter}</div>`);
-                dayCounter++;
+                if (dayCounter > daysInMonth) {
+                    currentRow.push('<div class="col-1 calendar-day-prev"></div>');
+                } else {
+                    currentRow.push(`<div class="col-1 calendar-day">${dayCounter}</div>`);
+                    dayCounter++;
+                }
             }
             rows.push(currentRow);
             currentRow = [];

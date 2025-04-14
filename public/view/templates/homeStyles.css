@@ -70,19 +70,26 @@ body {
     width: 20%;
     padding: 20px;
     border-right: 4px double var(--light-color);
+    border-left: 4px double var(--light-color);
 }
 
 .center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
     width: 80%;
     padding: 20px;
-    border-right: 4px double var(--light-color);
+    /* border-right: 4px double var(--light-color); */
 }
-/*
+
 .right {
     width: 20%;
     padding: 20px;
-    border-right: 1px solid var(--light-color);
+    border-right: 4px double var(--light-color);
+    border-left: 4px double var(--light-color);
 }
+/*
 .calendar {
     position: relative;
     width: 100%;
@@ -224,4 +231,13 @@ body {
     position: relative;
     color: var(--primary-color);
     /* border: 1px solid var(--light-color); */
+}
+.calendar-month-label {
+    width: 450px;
+    justify-content: center;
+    position: relative;
+    color: var(--primary-color);
+}
+.clay-txt {
+    color: var(--primary-color);
 }
