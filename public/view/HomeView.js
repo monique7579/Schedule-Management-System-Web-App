@@ -7,6 +7,7 @@ export class HomeView extends AbstractView {
     constructor(controller) {
         super(); //keyword super is required before this.---
         this.controller = controller;
+        this.currentDate = new Date(); //multiple things need access to this
     }
 
     async onMount() {
@@ -28,8 +29,8 @@ export class HomeView extends AbstractView {
         //to do: call render calendar and categories functions
         const left = this.buildCategoryColumn();
         viewWrapper.appendChild(left);
-        const currentDate = new Date(); //get date
-        const view = this.buildCalendar(currentDate); //call function to render calendar
+        // const currentDate = new Date(); //get date
+        const view = this.buildCalendar(this.currentDate); //call function to render calendar
         viewWrapper.appendChild(view);
         const right = this.buildEventColumn();
         viewWrapper.appendChild(right);
@@ -171,6 +172,7 @@ export class HomeView extends AbstractView {
     buildCalendar(currentDate) {
         console.log('HomeView.buildCalendar() called');
         const calendar = document.createElement('div');
+        calendar.id = "calendar";
         calendar.classList.add('center',);
 
         // const currentDate = new Date(); //get date
@@ -191,6 +193,7 @@ export class HomeView extends AbstractView {
         const prevMonthBtnCol = document.createElement('div'); //create div for btn
         prevMonthBtnCol.classList.add('col-1', 'text-center', 'calendar-header'); //center it
         const prevMonthBtn = document.createElement('button'); //create btn element
+        prevMonthBtn.id = "prevMonthBtn";
         prevMonthBtn.classList.add('btn-clay', 'btn'); //style btn
         prevMonthBtn.innerHTML = `<i class="bi bi-chevron-left"></i>`; //arrow on btn
         prevMonthBtnCol.appendChild(prevMonthBtn); //add btn to div
@@ -198,12 +201,13 @@ export class HomeView extends AbstractView {
         //month label
         const monthLabel = document.createElement('div'); //create div for label
         monthLabel.classList.add('col-5', 'text-center', 'fw-bold', 'calendar-month-label', 'fs-2'); //style
-        monthLabel.textContent = months[currentMonth]; //add label
+        monthLabel.textContent = months[currentMonth] + ' ' + currentYear; //add label
         monthLabelRow.appendChild(monthLabel); //append label
         //next month button, same process as prev button
         const nextMonthBtnCol = document.createElement('div');
         nextMonthBtnCol.classList.add('col-1', 'text-center', 'calendar-header');
         const nextMonthBtn = document.createElement('button');
+        nextMonthBtn.id = "nextMonthBtn";
         nextMonthBtn.classList.add('btn-clay', 'btn');
         nextMonthBtn.innerHTML = `<i class="bi bi-chevron-right"></i>`;
         nextMonthBtnCol.appendChild(nextMonthBtn);
@@ -231,6 +235,7 @@ export class HomeView extends AbstractView {
             currentRow.push('<div class="col-1 calendar-day-prev"></div>');
         }
         // Add the actual days
+        
         for (let i = firstDay; i < 7; i++) { //this is for first week (after blank days)
             currentRow.push(`<div class="col-1 calendar-day">${dayCounter}</div>`);
             dayCounter++;
@@ -239,12 +244,18 @@ export class HomeView extends AbstractView {
         currentRow = [];
 
         // add rest of days
+        const today = new Date();
         while (dayCounter <= daysInMonth) {
             for (let i = 0; i < 7; i++) {
                 if (dayCounter > daysInMonth) {
                     currentRow.push('<div class="col-1 calendar-day-prev"></div>');
                 } else {
-                    currentRow.push(`<div class="col-1 calendar-day">${dayCounter}</div>`);
+                    const isToday = 
+                        dayCounter === today.getDate() &&
+                        currentMonth === today.getMonth() &&
+                        currentYear === today.getFullYear();
+                    const dayClass = isToday ? 'calendar-day today' : 'calendar-day';
+                    currentRow.push(`<div class="col-1 ${dayClass}">${dayCounter}</div>`);
                     dayCounter++;
                 }
             }
@@ -267,13 +278,17 @@ export class HomeView extends AbstractView {
     //to do: create function that renders categories list (called in update view)
 
     attachEvents() {
-        // console.log('HomeView.attachEvents() called');
+        console.log('HomeView.attachEvents() called');
 
         //note: this is where event listeners are attached 
 
         //to do: attach category check box listeners 
         //to do: attach add category button listeners
         //to do: attach next and prev arrows for month
+        const nextMonthBtn = document.getElementById('nextMonthBtn');
+        nextMonthBtn.onclick = this.controller.onClickNextMonthButton;
+        const prevMonthBtn = document.getElementById('prevMonthBtn');
+        prevMonthBtn.onclick = this.controller.onClickPrevMonthButton;
         //to do: attach add event listener
         //to do: attach submit and close listener for add even modal
         //to do: attach listener to click on event (i.e. right click brings up edit)

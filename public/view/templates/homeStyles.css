@@ -218,7 +218,14 @@ body {
     justify-content: right;
     cursor: pointer;
     color: var(--primary-color);
-    border: 1px solid var(--light-color);
+    border: 1px solid var(--primary-color);
+}
+.today {
+    background-color: var(--primary-color);
+    /* border: 2px solid #ff69b4; */
+    font-weight: bold;
+    font-size: 1.7rem;
+    color: #fff;
 }
 .calendar-day-prev {
     width: 90px; /* or 14.28%*/
