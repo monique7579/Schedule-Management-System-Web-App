@@ -46,6 +46,40 @@ export class HomeView extends AbstractView {
         const addCategory = document.createElement('button');
         addCategory.classList.add('btn-clay', 'btn');
         addCategory.innerHTML = 'Add Category';
+        addCategory.setAttribute('data-bs-toggle', 'modal');
+        addCategory.setAttribute('data-bs-target', '#modaladdCategory');
+
+        const addCategoryModal = document.createElement('div');
+        addCategoryModal.className = 'modal fade';
+        addCategoryModal.id = 'modaladdCategory';//id
+        addCategoryModal.setAttribute('data-bs-backdrop', 'static');
+        addCategoryModal.setAttribute('data-bs-keyboard', 'false');
+        addCategoryModal.setAttribute('tabindex', '-1');
+        addCategoryModal.setAttribute('aria-labelledby', 'addCategoryModal');
+        addCategoryModal.setAttribute('aria-hidden', 'true');
+        addCategoryModal.classList.add('modal-clay',);
+
+        addCategoryModal.innerHTML = `
+        <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="modalAddCategoryLabel">Create Category</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+            <div class="modal-body">
+            <form name="formAddEvent">
+              <div class="mb-3">
+                <label class="form-label">Name</label>
+                <input type="text" class="form-control" name="title" required minlength="3">
+              </div>
+              <button type="submit" class="btn btn-clay">Create</button>
+            </form>
+            </div>
+        </div>
+        </div>
+        `;
+
+        categoryColumn.appendChild(addCategoryModal);
         categoryColumn.appendChild(addCategory);
 
         return categoryColumn;
