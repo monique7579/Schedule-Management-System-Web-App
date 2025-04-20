@@ -69,9 +69,82 @@ export class HomeView extends AbstractView {
         // const events = this.renderEventList(); //i need event list before I can call this
         // eventColumn.appendChild(events);
 
+        //this is the button to add an event
         const addEvent = document.createElement('button');
         addEvent.classList.add('btn-clay', 'btn');
         addEvent.innerHTML = 'Add Event';
+        addEvent.setAttribute('data-bs-toggle', 'modal');
+        addEvent.setAttribute('data-bs-target', '#modalAddEvent');
+        
+
+        const addEventModal = document.createElement('div');
+        addEventModal.className = 'modal fade';
+        addEventModal.id = 'modalAddEvent';//id
+        addEventModal.setAttribute('data-bs-backdrop', 'static');
+        addEventModal.setAttribute('data-bs-keyboard', 'false');
+        addEventModal.setAttribute('tabindex', '-1');
+        addEventModal.setAttribute('aria-labelledby', 'addEventModal');
+        addEventModal.setAttribute('aria-hidden', 'true');
+        addEventModal.classList.add('modal-clay',);
+
+        addEventModal.innerHTML = `
+        <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="modalAddEventLabel">Create Event</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+            <div class="modal-body">
+            <form name="formAddEvent">
+              <div class="mb-3">
+                <label class="form-label">Title</label>
+                <input type="text" class="form-control" name="title" required minlength="3">
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Description</label>
+                <textarea class="form-control" name="contents" rows="10" minlength="5"></textarea>
+              </div>
+              <div class="mb-3"> 
+                <label class="form-label">Category</label>
+                <select class="form-select" aria-label="Default select example">
+                    <option selected>Open this select menu</option>
+                    <option value="1">One</option>
+                    <option value="2">Two</option>
+                    <option value="3">Three</option>
+                </select>
+              </div>
+              <div class="mb-3"> 
+                <label class="form-label">Start -</label>
+                <input type="datetime-local" class="form-control" name="start">
+              </div>
+              <div class="mb-3"> 
+                <label class="form-label">Fin</label>
+                <input type="datetime-local" class="form-control" name="finish">
+              </div>
+              <div class="mb-3"> 
+                <div class="form-check mb-3">
+                    <input class="form-check-input" type="checkbox" value="" id="checkDefault">
+                    <label class="form-check-label" for="checkDefault">
+                    Reminder
+                    </label>
+                </div>
+                <select class="form-select" aria-label="Default select example">
+                    <option selected>Open this select menu</option>
+                    <option value="1">At event time</option>
+                    <option value="2">10 minutes before</option>
+                    <option value="3">30 minutes before</option>
+                    <option value="4">1 hour before</option>
+                    <option value="5">1 day before</option>
+                </select>
+              </div>
+              <button type="submit" class="btn btn-clay">Create</button>
+            </form>
+            </div>
+        </div>
+        </div>
+        `;
+        
+        eventColumn.appendChild(addEventModal);
         eventColumn.appendChild(addEvent);
 
         return eventColumn;
@@ -80,7 +153,7 @@ export class HomeView extends AbstractView {
     renderEventList() {
         const list = document.createElement('div');
         list.id = 'eventList';
-        
+
         if (this.controller.model.eventList.length === 0) {
             const noData = document.createElement('div');
             noData.innerHTML = '<h5>No upcoming events</h5>';
@@ -110,7 +183,7 @@ export class HomeView extends AbstractView {
         // console.log(daysInMonth);
         // console.log('current date', currentDate, 'currentMonth', currentMonth, 'current year', currentYear);
         const months = ["January", "February", "March", "April", "May", "June",
-                        "July", "August", "September", "October", "November", "December"];
+            "July", "August", "September", "October", "November", "December"];
 
         const monthLabelRow = document.createElement('div'); //for prev, next buttons and month label
         monthLabelRow.classList.add('row', 'mb-3');
@@ -128,8 +201,8 @@ export class HomeView extends AbstractView {
         monthLabel.textContent = months[currentMonth]; //add label
         monthLabelRow.appendChild(monthLabel); //append label
         //next month button, same process as prev button
-        const nextMonthBtnCol = document.createElement('div'); 
-        nextMonthBtnCol.classList.add('col-1','text-center', 'calendar-header');
+        const nextMonthBtnCol = document.createElement('div');
+        nextMonthBtnCol.classList.add('col-1', 'text-center', 'calendar-header');
         const nextMonthBtn = document.createElement('button');
         nextMonthBtn.classList.add('btn-clay', 'btn');
         nextMonthBtn.innerHTML = `<i class="bi bi-chevron-right"></i>`;
@@ -138,10 +211,10 @@ export class HomeView extends AbstractView {
 
         calendar.appendChild(monthLabelRow); //append the month label row to the calendar
 
-        const weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']; 
+        const weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
         const headerRow = document.createElement('div'); //set up days up the week place
-        headerRow.classList.add('row'); 
-    
+        headerRow.classList.add('row');
+
         weekdays.forEach(day => { //add and style each day
             const dayLabel = document.createElement('div');
             dayLabel.classList.add('col-1', 'text-center', 'fw-bold', 'calendar-header'); //calendar-header is added to use css for extra styling
@@ -153,7 +226,7 @@ export class HomeView extends AbstractView {
         let dayCounter = 1; //initialize counter for days (at 1 since first day == 1)
         let rows = [];
         let currentRow = [];
-        
+
         for (let i = 0; i < firstDay; i++) { //fill in blank days (i.e. if the month starts on tuesday, sun and monday are blank)
             currentRow.push('<div class="col-1 calendar-day-prev"></div>');
         }

@@ -41,6 +41,10 @@ html, body {
     --primary-color: #cc9674;
     --light-color: #eec9b2;
 }
+.modal-clay {
+    color: #cc9674;
+}
+
 /*
 * {
     margin: 0;
