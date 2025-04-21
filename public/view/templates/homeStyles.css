@@ -1,54 +1,52 @@
-/* things for nav */
-/* Ensure body takes full height */
+/* 
 html, body {
     height: 5%;
     margin: 0;
     padding: 0;
     display: flex;
-    /* flex-direction: column; */
+
 }
-#authContainer { /* commented out !important for temp fix tweak as needed
-    display: none; /* !important;  /* Completely remove from layout when hidden */
-    position: absolute; /* Avoid taking up space */
-    top: 0;
-    left: 0;
-    width: 100%;
+
+#authContainer {
+
+    position: absolute; 
+    
 }
-/* Navbar should always stay on top */
+
 #navMenuContainer {
     width: 100%;
     position: fixed;
     top: 0;
     left: 0;
-    z-index: 0; /*careful!! this will cover other elements*/
+    z-index: 1;
     padding: 10px 0;
 }
-/* #navMenuContainer .container .d-block {
-    height: 100px;
-} */
-
-/* Push the content down so it's not covered by the navbar */
-/* #contentWrapper {
-    margin-top: 60px;
-    flex-grow: 1;
-    display: flex;
-} */
-
+.dropdown-menu {
+    position: absolute;
+    z-index: 1000;
+}
+*/
 .btn-clay {
-    /* background-color: #cc9674;  */
+
     border-color: #cc9674;
     color: #cc9674;
-    /* padding: 3px; */
+
 }
 .btn-clay:hover {
     background-color: #cc9674;
     border-color: #cc9674;
     color: #fff;
 }
+
 :root {
     --primary-color: #cc9674;
     --light-color: #eec9b2;
 }
+.modal-clay {
+    color: #cc9674;
+}
+
+/*
 * {
     margin: 0;
     padding: 0;
@@ -59,8 +57,9 @@ body {
     min-height: 100vh;
     display: flex;
     padding: 7%;
-    /* align-items: center; */
+  
 }
+
 .container {
     position: relative;
     width: 100%;
@@ -70,23 +69,32 @@ body {
     color: #fff;
     display: flex;
     border-radius: 10px;
-    /* bg color? */
 }
+*/
 .left {
     width: 20%;
     padding: 20px;
-    border-right: 1px solid var(--light-color);
+    border-right: 4px double var(--light-color);
+    border-left: 4px double var(--light-color);
 }
+
 .center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
     width: 80%;
     padding: 20px;
-    border-right: 1px solid var(--light-color);
+    /* border-right: 4px double var(--light-color); */
 }
+
 .right {
     width: 20%;
     padding: 20px;
-    border-right: 1px solid var(--light-color);
+    border-right: 4px double var(--light-color);
+    border-left: 4px double var(--light-color);
 }
+/*
 .calendar {
     position: relative;
     width: 100%;
@@ -200,4 +208,48 @@ body {
 }
 .add-event-input {
     padding: 5px;
+} */
+
+.calendar-day {
+    width: 90px; /* or 14.28%*/
+    position: relative;
+    height: 90px;
+    display: flex;
+    padding: 4px 6px;
+    justify-content: right;
+    cursor: pointer;
+    color: var(--primary-color);
+    border: 1px solid var(--primary-color);
+}
+.today {
+    background-color: var(--primary-color);
+    /* border: 2px solid #ff69b4; */
+    font-weight: bold;
+    font-size: 1.7rem;
+    color: #fff;
+}
+.calendar-day-prev {
+    width: 90px; /* or 14.28%*/
+    position: relative;
+    height: 90px;
+    display: flex;
+    padding: 4px 6px;
+    justify-content: right;
+    cursor: pointer;
+}
+.calendar-header {
+    width: 90px;
+    justify-content: center;
+    position: relative;
+    color: var(--primary-color);
+    /* border: 1px solid var(--light-color); */
+}
+.calendar-month-label {
+    width: 450px;
+    justify-content: center;
+    position: relative;
+    color: var(--primary-color);
+}
+.clay-txt {
+    color: var(--primary-color);
 }
