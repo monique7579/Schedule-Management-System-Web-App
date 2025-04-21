@@ -1,18 +1,117 @@
-import { } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-firestore.js"
+import { 
+    getFirestore,
+    collection,
+    addDoc,
+    query,
+    orderBy,
+    getDocs,
+    getDoc,
+    where,
+    updateDoc,
+    doc,
+    deleteDoc
+} from "https://www.gstatic.com/firebasejs/11.5.0/firebase-firestore.js"
+import { Event } from '../model/Event.js';
+import { Category } from '../model/Category.js';
+import { currentUser } from './firebase_auth.js';
+import { app } from './firebase_core.js';
+const db = getFirestore(app);
 
 //note: where functions that interact with the firestore database are defined
 //i.e. add event { code to add an event as a saved document in firestore}
 
-//to do: add event
+const COLLECTION_EVENTS = 'events';
+const COLLECTION_CATEGORY = 'categories';
 
-//to do: update event
+//add new event
+export async function addEvent(event) {
+    const collRef = collection(db, COLLECTION_EVENTS);
+    const docRef = await addDoc(collRef, event);
+    return docRef.id; //docId is automatically assigned by firestore
+}
 
-//to do: delete event 
+//update event using full event object because event is complex and has many fields
+export async function updateEvent(event) {
+    const docRef = doc(db, COLLECTION_EVENTS, event.docId);
+    await updateDoc(docRef, event.toFirestore());
+}
 
-//to do: get event list
+//delete event by docId
+export async function deleteEvent(docId) {
+    const docRef = doc(db, COLLECTION_EVENTS, docId);
+    await deleteDoc(docRef);
+}
 
-//to do: add category
+//get single event by docId
+//can use if there is an interface for getting more info after clicking an event
+export async function getSingleEvent(docId) {
+    const docRef = doc(db, COLLECTION_EVENTS, docId);
+    const docSnap = await getDoc(docRef);
 
-//to do: delete category
+    if (docSnap.exists()) {
+        const event = new Event(docSnap.data());
+        event.set_docId(docSnap.id);
+        return event;
+    } else {
+        return null;
+    }
+}
 
-//to do: get category list
+//get all events for the current user
+export async function getEventList() {
+    const uid = currentUser?.uid;
+
+    let eventList = [];
+    const q = query(
+        collection(db, COLLECTION_EVENTS),
+        where('uid', '==', uid), //only gather the current user's events
+        orderBy('date', 'desc') //want to order by date? descending?
+    );   
+    const querySnapshot = await getDocs(q);
+    querySnapshot.forEach((doc) => {
+        const e = doc.data();
+        const event = new Event(e);
+        event.set_docId(doc.id); 
+        eventList.push(event);
+    });
+    return eventList;
+}
+
+//add new category
+export async function addCategory(category) {
+    const collRef = collection(db, COLLECTION_CATEGORY);
+    const docRef = await addDoc(collRef, category);
+    return docRef.id;
+}
+
+//update category using docId and update object
+export async function updateCategory(docId, update) {
+    const docRef = doc(db, COLLECTION_CATEGORY, docId);
+    await updateDoc(docRef, update);
+}
+
+//delete category by docId
+export async function deleteCategory(docId) {
+    const docRef = doc(db, COLLECTION_CATEGORY, docId);
+    await deleteDoc(docRef);
+}
+
+//get all categories for the current user
+export async function getCategoryList() {
+    const uid = currentUser?.uid;
+
+    let categoryList = [];
+    const q = query(
+        collection(db, COLLECTION_CATEGORY),
+        where('uid', '==', uid) //order?
+    );    
+    const querySnapshot = await getDocs(q);
+    querySnapshot.forEach((doc) => {
+        const c = doc.data();
+        const category = new Category(c);
+        category.set_docId(doc.id);
+        categoryList.push(category);
+    });
+
+    return categoryList;
+}
