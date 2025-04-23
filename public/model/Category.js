@@ -5,9 +5,9 @@ export class Category {
     docId = null;
 
     constructor(data) {
-        this.title = data.title;
         this.uid = data.uid;
-        //default is generated automatically so user shoudln't be able to set it
+        this.title = data.title;
+        //default category is generated automatically so user shouldn't be able to set it
         this.isDefault = data.isDefault || false;
     }
     

@@ -25,24 +25,32 @@ export class HomeController {
     //note: this is where the listeners for home components are added
 
     //listener for add event button that calls add event function in firestore controller
-    //note: may not won't work until the html form is given an id attribute for each field?
     async onSubmitAddEvent(e) {
         console.log('OnSubmitAddEvent called');
         e.preventDefault();     // prevent page from reloading on submission
         const uid = currentUser.uid;
         const title = e.target.title.value;             
-        const description = e.target.contents.value;         
+        const description = e.target.description.value;         
         const category = e.target.category.value;
         const start = e.target.start.value;
         const finish = e.target.finish.value;
+        const reminderBool = e.target.reminderBool.checked;
+        const reminderTime = e.target.reminderTime.value;
         const eventData = {
-            uid, title, description, category, start, finish
+            uid, title, description, category, start, finish,
+            reminderBool, reminderTime
         };
+        //checking the validity of the data retrieved from form
+        console.log({uid, title, description, category, start, finish,
+            reminderBool, reminderTime
+        });
         const event = new Event(eventData);
 
         try {
             const docId = await addEvent(event.toFirestore());
             event.set_docId(docId);
+            e.target.reset(); //clear form
+            console.log('Added event');
         } catch (error) {
             console.error('Error adding event: ', error);
             alert('Error adding event' + error);    //if a styled div for error messages is made, attach here
@@ -62,6 +70,8 @@ export class HomeController {
         try {
             const docId = await addCategory(category.toFirestore());
             category.set_docId(docId);
+            c.target.reset(); //clear form
+            console.log('Added category');
         } catch (error) {
             console.error('Error adding category: ', error);
             alert('Error adding category' + error);

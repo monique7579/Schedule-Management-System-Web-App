@@ -10,21 +10,22 @@ export class Event {
     docId = null;
 
     constructor(data) {
-        this.uid = data.uid;
+        this.uid = data.uid
         this.title = data.title;
         this.description = data.description;
-        this.reminderBool = data.reminder;
-        this.reminderTime = data.reminder;
         this.category = data.category;
         this.start = data.start;
         this.finish = data.finish;
+        this.reminderBool = data.reminderBool;
+        this.reminderTime = data.reminderTime;
     }
 
     set_docId(docId) {
         this.docId = docId;
     }
 
-    toFirestore() { //this function converts the data of the model into something the firestore database understands /can store
+    //this function converts the data of the model into something the firestore database understands /can store
+    toFirestore() {
         return {
             uid: this.uid,
             title: this.title,

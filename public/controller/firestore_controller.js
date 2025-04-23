@@ -27,6 +27,7 @@ const COLLECTION_CATEGORY = 'categories';
 export async function addEvent(event) {
     const collRef = collection(db, COLLECTION_EVENTS);
     const docRef = await addDoc(collRef, event);
+    console.log("Writing event to firestore ", event);
     return docRef.id; //docId is automatically assigned by firestore
 }
 
@@ -81,6 +82,7 @@ export async function getEventList() {
 export async function addCategory(category) {
     const collRef = collection(db, COLLECTION_CATEGORY);
     const docRef = await addDoc(collRef, category);
+    console.log("Writing category to firestore");
     return docRef.id;
 }
 
@@ -151,7 +153,7 @@ export async function getCategoryList() {
     //if the user has no categories, create a default category
     if (categoryList.length == 0) {
         const defaultCategory = new Category(
-            { name:"My Category", uid, isDefault: true });
+            { title:"My Category", uid, isDefault: true });
         const docId = await addCategory(defaultCategory.toFirestore());
         defaultCategory.set_docId(docId);
         categoryList.push(defaultCategory);
