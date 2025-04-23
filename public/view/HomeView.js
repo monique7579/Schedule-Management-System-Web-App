@@ -1,5 +1,6 @@
 import { AbstractView } from "./AbstractView.js";
 import { currentUser } from "../controller/firebase_auth.js";
+import { getCategoryList } from "../controller/firestore_controller.js";
 
 export class HomeView extends AbstractView {
     //instance variables 
@@ -137,15 +138,12 @@ export class HomeView extends AbstractView {
               </div>
               <div class="mb-3">
                 <label class="form-label">Description</label>
-                <textarea class="form-control" name="contents" rows="10" minlength="5"></textarea>
+                <textarea class="form-control" name="description" rows="10" minlength="5"></textarea>
               </div>
               <div class="mb-3"> 
                 <label class="form-label">Category</label>
-                <select class="form-select" aria-label="Default select example">
-                    <option selected>Open this select menu</option>
-                    <option value="1">One</option>
-                    <option value="2">Two</option>
-                    <option value="3">Three</option>
+                <select class="form-select" id="categoryDropdown" name="category" aria-label="Default select example">
+                    <option disable selected value="">Select a category</option>
                 </select>
               </div>
               <div class="mb-3"> 
@@ -158,12 +156,12 @@ export class HomeView extends AbstractView {
               </div>
               <div class="mb-3"> 
                 <div class="form-check mb-3">
-                    <input class="form-check-input" type="checkbox" value="" id="checkDefault">
+                    <input class="form-check-input" type="checkbox" name="reminderBool" value="" id="checkDefault">
                     <label class="form-check-label" for="checkDefault">
                     Reminder
                     </label>
                 </div>
-                <select class="form-select" aria-label="Default select example">
+                <select class="form-select" name="reminderTime" aria-label="Default select example">
                     <option selected>Open this select menu</option>
                     <option value="1">At event time</option>
                     <option value="2">10 minutes before</option>
@@ -183,6 +181,31 @@ export class HomeView extends AbstractView {
         eventColumn.appendChild(addEvent);
 
         return eventColumn;
+    }
+
+    //to do: repopulate once a new category is added
+    //add categories to the dropdown in the event add form
+    async populateCategoryDropdown() {
+        console.log('Populating category dropdown')
+        const select = document.getElementById('categoryDropdown');
+        if (!select) {
+            console.log('didnt find categorydropdown');
+            return;
+        }
+
+        select.innerHTML = '<option disabled selected value ="">Select a category</option>';
+        try {
+            const categories = await getCategoryList();
+            for (const category of categories) {
+                const option = document.createElement('option');
+                option.value = category.docId;
+                option.textContent = category.title;
+                select.appendChild(option);
+                console.log('Populated category dropdown');
+            }
+        } catch (e) {
+            console.error("Error loading categories", e);
+        }
     }
 
     renderEventList() {
@@ -311,7 +334,7 @@ export class HomeView extends AbstractView {
 
     //to do: create function that renders categories list (called in update view)
 
-    attachEvents() {
+    async attachEvents() {
         console.log('HomeView.attachEvents() called');
 
         //note: this is where event listeners are attached 
@@ -323,10 +346,18 @@ export class HomeView extends AbstractView {
         nextMonthBtn.onclick = this.controller.onClickNextMonthButton;
         const prevMonthBtn = document.getElementById('prevMonthBtn');
         prevMonthBtn.onclick = this.controller.onClickPrevMonthButton;
-        //to do: attach add event listener
+        //to do: close forms on submit
+        //add event listener
+        const formAddEvent = document.querySelector('#modalAddEvent form');
+        formAddEvent.onsubmit = this.controller.onSubmitAddEvent;
+        // add category listener
+        const formAddCategory = document.querySelector('#modaladdCategory form');
+        formAddCategory.onsubmit = this.controller.onSubmitAddCategory;
+
         //to do: attach submit and close listener for add even modal
         //to do: attach listener to click on event (i.e. right click brings up edit)
 
+        await this.populateCategoryDropdown(); //could be placed elsewhere but this worked for now
     }
 
     async onLeave() {

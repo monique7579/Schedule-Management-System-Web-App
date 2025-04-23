@@ -1,11 +1,14 @@
 export class Category {
-    name = null;
     uid = null;
+    title = null;
+    isDefault = false;
     docId = null;
 
     constructor(data) {
-        this.name = data.name;
         this.uid = data.uid;
+        this.title = data.title;
+        //default category is generated automatically so user shouldn't be able to set it
+        this.isDefault = data.isDefault || false;
     }
     
     set_docId(docId) {
@@ -14,8 +17,9 @@ export class Category {
     
     toFirestore() {
         return {
-            name: this.name,
             uid: this.uid,
+            title: this.title,
+            isDefault: this.isDefault
         };
     }
 }

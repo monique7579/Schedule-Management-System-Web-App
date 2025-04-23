@@ -27,6 +27,7 @@ const COLLECTION_CATEGORY = 'categories';
 export async function addEvent(event) {
     const collRef = collection(db, COLLECTION_EVENTS);
     const docRef = await addDoc(collRef, event);
+    console.log("Writing event to firestore ", event);
     return docRef.id; //docId is automatically assigned by firestore
 }
 
@@ -81,19 +82,55 @@ export async function getEventList() {
 export async function addCategory(category) {
     const collRef = collection(db, COLLECTION_CATEGORY);
     const docRef = await addDoc(collRef, category);
+    console.log("Writing category to firestore");
     return docRef.id;
 }
 
 //update category using docId and update object
 export async function updateCategory(docId, update) {
     const docRef = doc(db, COLLECTION_CATEGORY, docId);
+    const snapshot = await getDoc(docRef);
+    const category = snapshot.data();
+
+    if (category.isDefault) {
+        throw new Error("Default category cannot be updated");
+    }
+
     await updateDoc(docRef, update);
 }
 
 //delete category by docId
 export async function deleteCategory(docId) {
-    const docRef = doc(db, COLLECTION_CATEGORY, docId);
-    await deleteDoc(docRef);
+    const uid = currentUser?.uid;
+
+    const catRef = doc(db, COLLECTION_CATEGORY, docId);
+    const snapshot = await getDoc(catRef);
+    const category = snapshot.data();
+
+    //every event must have a category, so preserve default category
+    if (category.isDefault) {
+        throw new Error("Default category cannot be deleted");
+    }
+
+    //to delete a category, all events with that category need to be set back to default first
+    const categories = await getCategoryList();
+    const defaultCategory = categories.find(cat => cat.isDefault);
+
+    const eventQ = query(
+        collection(db, COLLECTION_EVENTS),
+        where('uid', '==', uid),
+        where('category', '==', docId)
+    );
+    const eventSnap = await getDocs(eventQ);
+    const batch = writeBatch(db);
+
+    eventSnap.forEach(doc => {
+        batch.update(eventRef, { 
+            category: defaultCategory.docId });
+    });
+
+    batch.delete(catRef);
+    await batch.commit();
 }
 
 //get all categories for the current user
@@ -112,6 +149,15 @@ export async function getCategoryList() {
         category.set_docId(doc.id);
         categoryList.push(category);
     });
+
+    //if the user has no categories, create a default category
+    if (categoryList.length == 0) {
+        const defaultCategory = new Category(
+            { title:"My Category", uid, isDefault: true });
+        const docId = await addCategory(defaultCategory.toFirestore());
+        defaultCategory.set_docId(docId);
+        categoryList.push(defaultCategory);
+    }
 
     return categoryList;
 }
