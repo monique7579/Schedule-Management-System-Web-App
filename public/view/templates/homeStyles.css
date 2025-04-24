@@ -1,31 +1,3 @@
-/* 
-html, body {
-    height: 5%;
-    margin: 0;
-    padding: 0;
-    display: flex;
-
-}
-
-#authContainer {
-
-    position: absolute; 
-    
-}
-
-#navMenuContainer {
-    width: 100%;
-    position: fixed;
-    top: 0;
-    left: 0;
-    z-index: 1;
-    padding: 10px 0;
-}
-.dropdown-menu {
-    position: absolute;
-    z-index: 1000;
-}
-*/
 .btn-clay {
 
     border-color: #cc9674;
@@ -37,6 +9,11 @@ html, body {
     border-color: #cc9674;
     color: #fff;
 }
+.category-checkbox:checked {
+    background-color: #cc9674;
+    border-color: #cc9674;
+    color: #fff;
+}
 
 :root {
     --primary-color: #cc9674;
@@ -44,6 +21,12 @@ html, body {
 }
 .modal-clay {
     color: #cc9674;
+}
+.text-clay {
+    color: #cc9674;
+}
+#event-list::-webkit-scrollbar {
+    display: none;  /* Chrome and Safari */
 }
 
 /*
@@ -94,121 +77,6 @@ body {
     border-right: 4px double var(--light-color);
     border-left: 4px double var(--light-color);
 }
-/*
-.calendar {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    color: #cc9674;
-    border-radius: 5px;
-    background-color: #fff;
-}
-.calendar .month {
-    width: 100%;
-    height: 15px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0 50px;
-    font-size: 1.2rem;
-    font-weight: 500;
-    text-transform: capitalize;
-}
-.calendar .month .prev,
-.calendar .month .next {
-    cursor: pointer;
-}
-.calendar .month .prev:hover,
-.calendar .month .next:hover {
-    color: #9c6340
-}
-.calendar .weekdays {
-    width: 100%;
-    height: 100px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 20px;
-    font-size: 1rem;
-    font-weight: 200;
-    text-transform: capitalize;
-}
-.calendar .weekdays div {
-    width: 14.28%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-.calendar .days {
-    width: 100%;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    padding: 0 20px;
-    font-size: 1rem;
-    font-weight: 500;
-    margin-bottom: 20px;
-}
-.calendar .days .day {
-    width: 14.28%;
-    position: relative;
-    height: 90px;
-    display: flex;
-    padding: 4px 6px;
-    justify-content: right;
-    cursor: pointer;
-    color: var(--primary-color);
-    border: 1px solid var(--light-color);
-}
-.calendar .day:not(.prev-date, .next-date):hover {
-    color: #fff;
-    background-color: var(--primary-color);
-}
-.calendar .days .prev-date,
-.calendar .days .next-date {
-    color: #eec9b2;
-}
-.calendar .days .active {
-    position: relative;
-    font-size: 2rem;
-    color: #fff;
-    background-color: var(--primary-color);
-}
-.calendar .days .today {
-    font-size: 2rem;
-}
-.calendar .days .event {
-    position: relative;
-}
-.calendar .days .event::after {
-    content: "";
-    position: absolute;
-    bottom: 10%;
-    left: 15%;
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    transform: translateX(-50%);
-    background-color: var(--primary-color);
-}
-.calendar .days .day:hover.event::after {
-    background-color: #fff;
-}
-.calendar .days .active.event::after {
-    background-color: #fff;
-    bottom: 20%;
-}
-.calendar .days .active.event {
-    padding-bottom: 10px;
-}
-.add-event-input {
-    padding: 5px;
-} */
 
 .calendar-day {
     width: 90px; /* or 14.28%*/
@@ -252,4 +120,8 @@ body {
 }
 .clay-txt {
     color: var(--primary-color);
+}
+.category-checkbox {
+    color: var(--primary-color);
+    accent-color : var(--primary-color);
 }
