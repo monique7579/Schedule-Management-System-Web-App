@@ -2,7 +2,7 @@ import { HomeModel } from "../model/HomeModel.js";
 import { Event } from '../model/Event.js';
 import { Category } from '../model/Category.js';
 import { currentUser } from './firebase_auth.js';
-import { addCategory, addEvent, getCategoryList, getEventList } from './firestore_controller.js';
+import { addCategory, addEvent, getCategoryList, getEventList, deleteEvent } from './firestore_controller.js';
 import { startSpinner, stopSpinner } from "../view/util.js";
 
 export const glHomeModel = new HomeModel();
@@ -19,6 +19,7 @@ export class HomeController {
         this.onSubmitAddCategory = this.onSubmitAddCategory.bind(this);
         this.onClickPrevMonthButton = this.onClickPrevMonthButton.bind(this);
         this.onClickNextMonthButton = this.onClickNextMonthButton.bind(this);
+        this.onClickDeleteEvent = this.onClickDeleteEvent.bind(this);
     }
 
     setView(view) {
@@ -65,6 +66,7 @@ export class HomeController {
         const form = e.target;
         const title = form.title.value;
         const description = form.description.value;
+        //to do: somehow every category that exists is getting added to the event on event creation, need to fix
         const category = form.category.textContent; //text content to show the actual title of category not id
         const start = form.start.value;
         const finish = form.finish.value;
@@ -98,12 +100,12 @@ export class HomeController {
         this.view.render(); //render view to show the new event
     }
 
-    //listener for add event button that calls add category function in firestore controller
+    //listener for add category button that calls add category function in firestore controller
     async onSubmitAddCategory(e) {
         console.log('OnSubmitAddCategory called');
         e.preventDefault();
         const uid = currentUser.uid;
-        const title = c.target.title.value;//can add .toLowerCase() if we want
+        const title = e.target.title.value;//can add .toLowerCase() if we want
         
         for (let i = 0; i < this.model.categoryList.length; i++) { //this makes it so they user cannot create duplicate categories (not case sensitive)
             if (title === this.model.categoryList[i].title) {
@@ -149,6 +151,38 @@ export class HomeController {
         this.view.buildCalendar(this.view.currentDate); //call the function that builds the calendar
         this.view.render(); //rerender the view
     }
+
+    //listener for delete event
+    async onClickDeleteEvent(e) {
+        console.log('OnClickDeleteEvent called');
+        e.preventDefault();
+        
+        //to do: need way to get docId from however the listener is triggered
+        //i think this depends on what method we use for deleting the event (right click or button)
+        // const docId = e.currentTarget.card.id;
+        // const eventNote = this.model.getEventByDocId(docId); 
+    
+        startSpinner();
+        try {
+            await deleteEvent(docId); //delete from firestore
+            this.model.deleteEventByDocId(docId); //delete from model
+            stopSpinner();
+            this.view.render(); //rerender the view
+        } catch(e) {
+            stopSpinner();
+            console.error(e);
+            alert('Error deleting event from Firestore');
+            return;
+        }
+        
+    }
+
+    //to do: listener for left or right clicking event (if that is how we will access options)
+    //to do: listener for category filter change?
+    //to do: listener for updating event
+    //to do: listener for deleting category
+    //to do: listener for updating category
+
 
     //instruction:: DELETE BEFORE SUBMISSION
     //to do: define listeners for all interact-able components in home view, they will call a corresponding
