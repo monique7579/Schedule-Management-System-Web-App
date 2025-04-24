@@ -35,6 +35,25 @@ export class HomeModel {
     }
 
     //delete
+    deleteEventByDocId(docId) {
+        const index = this.eventList.findIndex(event => event.docId == docId);
+        if (index >= 0) {
+            this.eventList.splice(index, 1);
+        } else { //shouldn't happen
+            //event wasn't found
+            console.error('deleteEventByDocId: event not found', docId);
+        }
+    }
+
+    deleteCategoryByDocId(docId) {
+        const index = this.categoryList.findIndex(category => category.docId == docId);
+        if (index >= 0) {
+            this.categoryList.splice(index, 1);
+        } else { //shouldn't happen
+            //category wasn't found
+            console.error('deleteCategoryByDocId: category not found', docId);
+        }
+    }
 
     //order
     //by alphabet for events 
@@ -45,5 +64,5 @@ export class HomeModel {
     //by timestamp for tasks
     orderEventListByStartTime() {
         this.eventList.sort((a,b) => b.start - a.start);
-    }
+    } 
 }

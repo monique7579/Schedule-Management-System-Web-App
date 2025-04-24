@@ -46,7 +46,7 @@ export async function getSingleEvent(docId) {
     const docRef = doc(db, COLLECTION_EVENTS, docId);
     const docSnap = await getDoc(docRef);
 
-    if (docSnap.exists()) {
+    if (docSnap.exists()) { //prevents undefined errors from constructing object just in case
         const event = new Event(docSnap.data());
         event.set_docId(docSnap.id);
         return event;
@@ -61,7 +61,7 @@ export async function getEventList(uid) {
     const q = query(
         collection(db, COLLECTION_EVENTS),
         where('uid', '==', uid), //only gather the current user's events
-        // orderBy('date', 'desc') //date field was removed, the ordering can be changed
+        //list is ordered elsewhere
 
     );   
     const querySnapshot = await getDocs(q);
@@ -88,7 +88,7 @@ export async function updateCategory(docId, update) {
     const snapshot = await getDoc(docRef);
     const category = snapshot.data();
 
-    if (category.isDefault) {
+    if (category.isDefault) { //preserve default category
         throw new Error("Default category cannot be updated");
     }
 
@@ -100,7 +100,7 @@ export async function deleteCategory(docId) {
     const uid = currentUser?.uid;
 
     const catRef = doc(db, COLLECTION_CATEGORY, docId);
-    const snapshot = await getDoc(catRef);
+    const snapshot = await getDoc(catRef); 
     const category = snapshot.data();
 
     //every event must have a category, so preserve default category
@@ -108,7 +108,8 @@ export async function deleteCategory(docId) {
         throw new Error("Default category cannot be deleted");
     }
 
-    //to delete a category, all events with that category need to be set back to default first
+    //to delete a category, all events with that category need to be assigned back to default category first
+    //alternatively we could delete all events under the category being deleted !!
     const categories = await getCategoryList();
     const defaultCategory = categories.find(cat => cat.isDefault);
 
@@ -118,17 +119,17 @@ export async function deleteCategory(docId) {
         where('category', '==', docId)
     );
     const eventSnap = await getDocs(eventQ);
-    const batch = writeBatch(db);
+    const batch = writeBatch(db); //batch operation groups the updates/delets into one atomic request
 
     eventSnap.forEach(docSnap => {
         const eventRef = doc(db, COLLECTION_EVENTS, docSnap.id);
-        batch.update(eventRef, { 
+        batch.update(eventRef, { //update each event with the default category
             category: defaultCategory.docId 
         });
     });
 
-    batch.delete(catRef);
-    await batch.commit();
+    batch.delete(catRef); //finally delete the category
+    await batch.commit(); //apply all changes in a single transaction
 }
 
 //get all categories for the current user (by uid)
@@ -136,7 +137,8 @@ export async function getCategoryList(uid) {
     let categoryList = [];
     const q = query(
         collection(db, COLLECTION_CATEGORY),
-        where('uid', '==', uid), //ordered later
+        where('uid', '==', uid),
+        //list is ordered elsewhere
     );    
     const querySnapshot = await getDocs(q);
     querySnapshot.forEach((doc) => {
@@ -149,7 +151,7 @@ export async function getCategoryList(uid) {
     //if the user has no categories, create a default category
     if (categoryList.length === 0) {
         const defaultCategory = new Category(
-            { title:"My Category", uid, isDefault: true }); //'My Category' is default, change as needed
+            { title:"my calendar", uid, isDefault: true }); //'my calendar' is default for every user
         const docId = await addCategory(defaultCategory.toFirestore());
         defaultCategory.set_docId(docId);
         categoryList.push(defaultCategory);
@@ -181,7 +183,7 @@ export async function getEventByCategory(category) {
 
 //firestore doesn't support query predicate "contains"
 //but we can search equivalence of the word or beginning of word
-//it is also case-sensitive: need to make workaround
+//it is also case-sensitive but we are storing everything lowercase
 export async function getEventByTitle(keyword) {
     const uid = currentUser?.uid;
 
