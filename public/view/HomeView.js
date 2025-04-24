@@ -70,7 +70,7 @@ export class HomeView extends AbstractView {
             <button id="modalAddCategory-closeBtn" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
             <div class="modal-body">
-            <form name="formAddEvent">
+            <form name="formAddCategory">
               <div class="mb-3">
                 <label class="form-label">Name</label>
                 <input type="text" class="form-control" name="title" required minlength="3">
@@ -235,7 +235,8 @@ export class HomeView extends AbstractView {
     renderEventList() {
         const list = document.createElement('div');
         list.id = 'event-list';
-        list.className = 'mt-3 overflow-auto';
+        list.className = 'mt-3 overflow-auto max';//overflow-auto?
+        list.style = "max-height: 500px;";
 
         if (this.controller.model.eventList.length === 0) {
             const noData = document.createElement('div');
@@ -375,6 +376,7 @@ export class HomeView extends AbstractView {
 
     async attachEvents() {
         console.log('HomeView.attachEvents() called');
+        await this.populateCategoryDropdown(); //could be placed elsewhere but this worked for now
 
         //note: this is where event listeners are attached 
 
@@ -391,13 +393,13 @@ export class HomeView extends AbstractView {
         // formAddEvent.onsubmit = this.controller.onSubmitAddEvent;
         document.forms.formAddEvent.onsubmit = this.controller.onSubmitAddEvent;
         // add category listener
-        const formAddCategory = document.querySelector('#modaladdCategory form');
-        formAddCategory.onsubmit = this.controller.onSubmitAddCategory;
+        // const formAddCategory = document.querySelector('#modaladdCategory form');
+        // formAddCategory.onsubmit = this.controller.onSubmitAddCategory;
+        document.forms.formAddCategory.onsubmit = this.controller.onSubmitAddCategory;
 
         //to do: attach submit and close listener for add even modal
         //to do: attach listener to click on event (i.e. right click brings up edit)
 
-        await this.populateCategoryDropdown(); //could be placed elsewhere but this worked for now
     }
 
     async onLeave() {

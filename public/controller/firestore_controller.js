@@ -26,7 +26,7 @@ const COLLECTION_CATEGORY = 'categories';
 //add new event
 export async function addEvent(event) {
     const collRef = collection(db, COLLECTION_EVENTS);
-    const docRef = await addDoc(collRef, event.toFirestore());
+    const docRef = await addDoc(collRef, event);
     console.log("Writing event to firestore ", event);
     return docRef.id; //docId is automatically assigned by firestore
 }

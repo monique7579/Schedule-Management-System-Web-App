@@ -52,7 +52,7 @@ export class HomeController {
         } catch (e) {
             stopSpinner();
             console.error(e);
-            this.model.setCategoryList([]);
+            this.model.setEventList([]);
             alert('Error loading tasks');
         }
     }
@@ -65,7 +65,7 @@ export class HomeController {
         const form = e.target;
         const title = form.title.value;
         const description = form.description.value;
-        const category = form.category.value;
+        const category = form.category.value; //this needs to be readable 
         const start = form.start.value;
         const finish = form.finish.value;
         const reminderBool = form.reminderBool.checked;
@@ -79,7 +79,7 @@ export class HomeController {
         console.log(event);
         startSpinner();
         try {
-            const docId = await addEvent(event);//to firestore?
+            const docId = await addEvent(event.toFirestore());//to firestore?
             event.set_docId(docId);
             stopSpinner();
             e.target.reset(); //clear form

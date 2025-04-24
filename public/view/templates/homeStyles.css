@@ -25,6 +25,9 @@
 .text-clay {
     color: #cc9674;
 }
+#event-list::-webkit-scrollbar {
+    display: none;  /* Chrome and Safari */
+}
 
 /*
 * {
