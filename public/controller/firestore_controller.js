@@ -66,7 +66,7 @@ export async function getEventList() {
     const q = query(
         collection(db, COLLECTION_EVENTS),
         where('uid', '==', uid), //only gather the current user's events
-        orderBy('date', 'desc') //want to order by date? descending?
+        // orderBy('date', 'desc') //date field was removed, the ordering can be changed
     );   
     const querySnapshot = await getDocs(q);
     querySnapshot.forEach((doc) => {
@@ -124,9 +124,11 @@ export async function deleteCategory(docId) {
     const eventSnap = await getDocs(eventQ);
     const batch = writeBatch(db);
 
-    eventSnap.forEach(doc => {
+    eventSnap.forEach(docSnap => {
+        const eventRef = doc(db, COLLECTION_EVENTS, docSnap.id);
         batch.update(eventRef, { 
-            category: defaultCategory.docId });
+            category: defaultCategory.docId 
+        });
     });
 
     batch.delete(catRef);
@@ -153,7 +155,7 @@ export async function getCategoryList() {
     //if the user has no categories, create a default category
     if (categoryList.length == 0) {
         const defaultCategory = new Category(
-            { title:"My Category", uid, isDefault: true });
+            { title:"My Category", uid, isDefault: true }); //'My Category' is default, change as needed
         const docId = await addCategory(defaultCategory.toFirestore());
         defaultCategory.set_docId(docId);
         categoryList.push(defaultCategory);
@@ -161,3 +163,69 @@ export async function getCategoryList() {
 
     return categoryList;
 }
+
+//return list of all events from the given category
+export async function getEventByCategory(category) {
+    const uid = currentUser?.uid;
+
+    let results = [];
+    const q = query(
+        collection(db, COLLECTION_EVENTS),
+        where('uid', '==', uid),
+        where('category', '==', category)
+    );
+
+    const querySnapshot = await getDocs(q);
+    querySnapshot.forEach(doc => {
+        const event = new Event(doc.data());
+        event.set_docId(doc.id);
+        results.push(event);
+    });
+
+    return results;
+}
+
+//firestore doesn't support query predicate "contains"
+//but we can search equivalence of the word or beginning of word
+//it is also case-sensitive: need to make workaround
+export async function getEventByTitle(keyword) {
+    const uid = currentUser?.uid;
+
+    let results = [];
+    const q = query(
+        collection(db, COLLECTION_EVENTS),
+        where('uid', '==', uid),
+        where('title', '>=', keyword),
+        where('title', '<=', keyword + '\uf8ff') //search by prefix
+    );
+
+    const querySnapshot = await getDocs(q);
+    querySnapshot.forEach(doc => {
+        const event = new Event(doc.data());
+        event.set_docId(doc.id);
+        results.push(event);
+    });
+
+    return results;
+}
+
+//search based on the finish date
+// export async function searchEventByEnd(date) {
+//     const uid = currentUser?.uid;
+
+//     let results =[];
+//     const q = query(
+//         collection(db, COLLECTION_EVENTS),
+//         where('uid', '==', uid),
+//         where('finish', '==', date)
+//     );
+
+//     const querySnapshot = await getDocs(q);
+//     querySnapshot.forEach(doc => {
+//         const event = new Event(doc.data());
+//         event.set_docId(doc.id);
+//         results.push(event);
+//     });
+
+//     return results;
+// }

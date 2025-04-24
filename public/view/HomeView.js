@@ -200,9 +200,9 @@ export class HomeView extends AbstractView {
                 const option = document.createElement('option');
                 option.value = category.docId;
                 option.textContent = category.title;
-                select.appendChild(option);
-                console.log('Populated category dropdown');
+                select.appendChild(option);  
             }
+            console.log('Populated category dropdown');
         } catch (e) {
             console.error("Error loading categories", e);
         }
@@ -350,7 +350,8 @@ export class HomeView extends AbstractView {
         //add event listener
         const formAddEvent = document.querySelector('#modalAddEvent form');
         formAddEvent.onsubmit = this.controller.onSubmitAddEvent;
-        // add category listener
+
+        //add category listener
         const formAddCategory = document.querySelector('#modaladdCategory form');
         formAddCategory.onsubmit = this.controller.onSubmitAddCategory;
 
