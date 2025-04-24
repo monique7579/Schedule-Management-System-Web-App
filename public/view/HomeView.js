@@ -385,6 +385,10 @@ export class HomeView extends AbstractView {
 
         document.forms.formAddCategory.onsubmit = this.controller.onSubmitAddCategory; //attach listener to submit button of AddCategory modal/form (defined in HomeController.js)
 
+        document.querySelectorAll('.card-event').forEach( card => {
+            card.onclick = this.controller.onClickEventCard; //left click
+            card.oncontextmenu = this.controller.onRightClickEventCard; //right click
+        });
         //to do: attach listener to click on event (i.e. right click brings up edit)
 
     }

@@ -20,6 +20,8 @@ export class HomeController {
         this.onClickPrevMonthButton = this.onClickPrevMonthButton.bind(this);
         this.onClickNextMonthButton = this.onClickNextMonthButton.bind(this);
         this.onClickDeleteEvent = this.onClickDeleteEvent.bind(this);
+        this.onClickEventCard = this.onClickEventCard.bind(this);
+        this.onRightClickEventCard = this.onRightClickEventCard.bind(this);
     }
 
     setView(view) {
@@ -177,6 +179,32 @@ export class HomeController {
     }
 
     //to do: listener for left or right clicking event (if that is how we will access options)
+
+    async onClickEventCard(e) {
+        console.log('onClickEventCard called');
+        const card = e.currentTarget;
+        const docId = card.id;
+        const event = this.model.getEventByDocId(docId);
+        if (!event) {
+            console.error('onClickEventCard: event not found', docId);
+            return;
+        }
+
+        const form = document.forms.formEditEvent;
+                
+    }
+
+    async onRightClickEventCard(e) {
+        console.log('onRightClickEventCard called');
+        e.preventDefault();
+        const card = e.currentTarget;
+        const docId = card.id;
+        const event = this.model.getEventByDocId(docId);
+        if (!event) {
+            console.error('onRightClickEventCard: event not found', docId);
+            return;
+        }
+    }
     //to do: listener for category filter change?
     //to do: listener for updating event
     //to do: listener for deleting category
