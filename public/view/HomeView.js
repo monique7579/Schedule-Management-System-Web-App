@@ -26,7 +26,7 @@ export class HomeView extends AbstractView {
         viewWrapper.classList.add('d-flex'); //allows the elements to line up horizontally
         const response = await fetch('/view/templates/home.html', { cache: 'no-store' }); //to use await function must be async
         viewWrapper.innerHTML = await response.text();
-    
+
         const left = this.buildCategoryColumn(); //build the left side column which is the category column
         viewWrapper.appendChild(left); //append the left column to "master" view
 
@@ -115,7 +115,7 @@ export class HomeView extends AbstractView {
     }
 
     //function that renders Event column
-    buildEventColumn() { 
+    buildEventColumn() {
         console.log('HomeView.buildEventColumn()) called');
         const eventColumn = document.createElement('div'); //create div to hold all elements of the column
         eventColumn.classList.add('right'); //class for css styling purposes
@@ -253,19 +253,29 @@ export class HomeView extends AbstractView {
     }
 
     //function called by renderEventList to create individual event cards
-    createCard(event) { 
+    createCard(event) {
         const card = document.createElement('div'); //create div that holds and individual card
         card.className = 'mb-2'; //bootstrap style
         //HTML for the card to look how it should and include what it needs to
         card.innerHTML = `
-        <div id=${event.docId} class="card-event card">
+        <div id=${event.docId} class="card-event card"
+                tabindex="0"
+                data-bs-toggle="popover"
+                data-bs-trigger="focus"
+                data-bs-placement="left"
+                data-bs-html="true"
+                data-bs-content='<button type="button" class="btn btn-clay btn-sm">Edit</button>'>
             <h6 class="card-title ms-2 mt-1 text-clay">${event.title}</h6>
             <small class="text-clay ms-2 mt-1">${event.description || 'no description'}</small>
             <small class="text-clay ms-2 mt-1">${event.category}</small>
             <small class="text-clay ms-2 mt-1">${new Date(event.start).toLocaleString()} - ${new Date(event.finish).toLocaleString()}</small>
         </div>
        `;
-       return card; //return card for renderEventList function
+        const popoverTarget = card.querySelector('.card-event'); //grab card
+        new bootstrap.Popover(popoverTarget, {
+            html: true
+        }); // Initialize popover on card
+        return card; //return card for renderEventList function
     }
 
     //function that renders calendar (called in update view)
@@ -382,7 +392,7 @@ export class HomeView extends AbstractView {
         prevMonthBtn.onclick = this.controller.onClickPrevMonthButton; //attach prev month listener(defined in HomeController.js)
 
         document.forms.formAddEvent.onsubmit = this.controller.onSubmitAddEvent; //attach listener to submit button of AddEvent modal/form (defined in HomeController.js)
-        
+
         document.forms.formAddCategory.onsubmit = this.controller.onSubmitAddCategory; //attach listener to submit button of AddCategory modal/form (defined in HomeController.js)
 
         //to do: attach listener to click on event (i.e. right click brings up edit)
