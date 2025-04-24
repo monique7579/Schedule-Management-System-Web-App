@@ -16,6 +16,8 @@ export class HomeView extends AbstractView {
             this.parentElement.innerHTML = '<h1>Access Denied</h1>';
             return;
         }
+        await this.controller.onLoadCategoryList();
+        await this.controller.onLoadEventList();
         console.log('HomeView.onMount() called');
     }
 
@@ -26,7 +28,7 @@ export class HomeView extends AbstractView {
         const response = await fetch('/view/templates/home.html', { cache: 'no-store' }); //to use await functin must be async
         viewWrapper.innerHTML = await response.text();
 
-        //to do: call function that renders category column
+        //call function that renders category column
         //to do: call render calendar and categories functions
         const left = this.buildCategoryColumn();
         viewWrapper.appendChild(left);
@@ -65,7 +67,7 @@ export class HomeView extends AbstractView {
         <div class="modal-content">
           <div class="modal-header">
             <h1 class="modal-title fs-5" id="modalAddCategoryLabel">Create Category</h1>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <button id="modalAddCategory-closeBtn" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
             <div class="modal-body">
             <form name="formAddEvent">
@@ -83,7 +85,35 @@ export class HomeView extends AbstractView {
         categoryColumn.appendChild(addCategoryModal);
         categoryColumn.appendChild(addCategory);
 
+        //render category list
+        const categoryList = this.renderCategoryList();
+        categoryColumn.appendChild(categoryList);
+
         return categoryColumn;
+    }
+
+    renderCategoryList() {
+        const list = document.createElement('div');
+        list.id = 'category-list';
+        list.className = 'mt-3'; //add classes/ styling
+
+        if (this.controller.model.categoryList.length === 0) {
+            const noData = document.createElement('div');
+            noData.innerHTML = '<h4 class="text-clay">No categories have been Added!</h4>';
+            list.appendChild(noData);
+        } else {
+            for (const category of this.controller.model.categoryList) {
+                const categoryCheck = document.createElement('div');
+                categoryCheck.className = 'form-check category-checkbox';
+                categoryCheck.innerHTML = `
+                    <input class="form-check-input category-checkbox btn-clay" type="checkbox" value="" id="${category.docId}" checked>
+                    <label class="form-check-label" for="${category.docId}">
+                        ${category.title}
+                    </label>`
+                list.appendChild(categoryCheck);
+            }
+        }
+        return list;
     }
 
     buildEventColumn() {
@@ -102,16 +132,13 @@ export class HomeView extends AbstractView {
         eventHeader.appendChild(searchButton);
         eventColumn.appendChild(eventHeader);
 
-        // const events = this.renderEventList(); //i need event list before I can call this
-        // eventColumn.appendChild(events);
-
         //this is the button to add an event
         const addEvent = document.createElement('button');
         addEvent.classList.add('btn-clay', 'btn');
         addEvent.innerHTML = 'Add Event';
         addEvent.setAttribute('data-bs-toggle', 'modal');
         addEvent.setAttribute('data-bs-target', '#modalAddEvent');
-        
+
 
         const addEventModal = document.createElement('div');
         addEventModal.className = 'modal fade';
@@ -128,7 +155,7 @@ export class HomeView extends AbstractView {
         <div class="modal-content">
           <div class="modal-header">
             <h1 class="modal-title fs-5" id="modalAddEventLabel">Create Event</h1>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <button id="modalAddEvent-closeBtn" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
             <div class="modal-body">
             <form name="formAddEvent">
@@ -143,7 +170,7 @@ export class HomeView extends AbstractView {
               <div class="mb-3"> 
                 <label class="form-label">Category</label>
                 <select class="form-select" id="categoryDropdown" name="category" aria-label="Default select example">
-                    <option disable selected value="">Select a category</option>
+                    
                 </select>
               </div>
               <div class="mb-3"> 
@@ -170,38 +197,35 @@ export class HomeView extends AbstractView {
                     <option value="5">1 day before</option>
                 </select>
               </div>
-              <button type="submit" class="btn btn-clay">Create</button>
+              <button id="modalAddEvent-submitBtn" type="submit" class="btn btn-clay">Create</button>
             </form>
             </div>
         </div>
         </div>
         `;
-        
+
         eventColumn.appendChild(addEventModal);
         eventColumn.appendChild(addEvent);
+
+        const events = this.renderEventList(); //i need event list before I can call this
+        eventColumn.appendChild(events);
 
         return eventColumn;
     }
 
-    //to do: repopulate once a new category is added
     //add categories to the dropdown in the event add form
     async populateCategoryDropdown() {
-        console.log('Populating category dropdown')
         const select = document.getElementById('categoryDropdown');
         if (!select) {
             console.log('didnt find categorydropdown');
             return;
         }
-
-        select.innerHTML = '<option disabled selected value ="">Select a category</option>';
         try {
-            const categories = await getCategoryList();
-            for (const category of categories) {
+            for (const category of this.controller.model.categoryList) {
                 const option = document.createElement('option');
                 option.value = category.docId;
                 option.textContent = category.title;
                 select.appendChild(option);
-                console.log('Populated category dropdown');
             }
         } catch (e) {
             console.error("Error loading categories", e);
@@ -210,11 +234,12 @@ export class HomeView extends AbstractView {
 
     renderEventList() {
         const list = document.createElement('div');
-        list.id = 'eventList';
+        list.id = 'event-list';
+        list.className = 'mt-3 overflow-auto';
 
         if (this.controller.model.eventList.length === 0) {
             const noData = document.createElement('div');
-            noData.innerHTML = '<h5>No upcoming events</h5>';
+            noData.innerHTML = '<h5 class="text-clay">No upcoming events</h5>';
             list.appendChild(noData);
         } else {
             for (const event of this.controller.model.eventList) {
@@ -223,6 +248,20 @@ export class HomeView extends AbstractView {
             }
         }
         return list;
+    }
+
+    createCard(event) {
+        const card = document.createElement('div');
+        card.className = '';
+        card.innerHTML = `
+        <div id=${event.docId} class="card-event card">
+            <h4 class="card-title ms-3 mt-3 text-clay">${event.title}</h4>
+            <p class="text-clay">${event.description || 'no description'}</p>
+            <p class="text-clay">${event.category}</p>
+            <p class="text-clay">${new Date(event.start).toLocaleString()}</p>
+        </div>
+       `;
+       return card;
     }
 
     //to do: create function that renders calendar (called in update view)
@@ -292,7 +331,7 @@ export class HomeView extends AbstractView {
             currentRow.push('<div class="col-1 calendar-day-prev"></div>');
         }
         // Add the actual days
-        
+
         for (let i = firstDay; i < 7; i++) { //this is for first week (after blank days)
             currentRow.push(`<div class="col-1 calendar-day">${dayCounter}</div>`);
             dayCounter++;
@@ -307,7 +346,7 @@ export class HomeView extends AbstractView {
                 if (dayCounter > daysInMonth) {
                     currentRow.push('<div class="col-1 calendar-day-prev"></div>');
                 } else {
-                    const isToday = 
+                    const isToday =
                         dayCounter === today.getDate() &&
                         currentMonth === today.getMonth() &&
                         currentYear === today.getFullYear();
@@ -348,8 +387,9 @@ export class HomeView extends AbstractView {
         prevMonthBtn.onclick = this.controller.onClickPrevMonthButton;
         //to do: close forms on submit
         //add event listener
-        const formAddEvent = document.querySelector('#modalAddEvent form');
-        formAddEvent.onsubmit = this.controller.onSubmitAddEvent;
+        // const formAddEvent = document.getElementById('modalAddEvent-submitBtn');
+        // formAddEvent.onsubmit = this.controller.onSubmitAddEvent;
+        document.forms.formAddEvent.onsubmit = this.controller.onSubmitAddEvent;
         // add category listener
         const formAddCategory = document.querySelector('#modaladdCategory form');
         formAddCategory.onsubmit = this.controller.onSubmitAddCategory;

@@ -26,7 +26,7 @@ const COLLECTION_CATEGORY = 'categories';
 //add new event
 export async function addEvent(event) {
     const collRef = collection(db, COLLECTION_EVENTS);
-    const docRef = await addDoc(collRef, event);
+    const docRef = await addDoc(collRef, event.toFirestore());
     console.log("Writing event to firestore ", event);
     return docRef.id; //docId is automatically assigned by firestore
 }
@@ -59,14 +59,14 @@ export async function getSingleEvent(docId) {
 }
 
 //get all events for the current user
-export async function getEventList() {
-    const uid = currentUser?.uid;
+export async function getEventList(uid) {
+    // const uid = currentUser?.uid;
 
     let eventList = [];
     const q = query(
         collection(db, COLLECTION_EVENTS),
         where('uid', '==', uid), //only gather the current user's events
-        orderBy('date', 'desc') //want to order by date? descending?
+        orderBy('start', 'desc') //want to order by date? descending?
     );   
     const querySnapshot = await getDocs(q);
     querySnapshot.forEach((doc) => {
@@ -134,13 +134,13 @@ export async function deleteCategory(docId) {
 }
 
 //get all categories for the current user
-export async function getCategoryList() {
-    const uid = currentUser?.uid;
+export async function getCategoryList(uid) { //pass uid as parameter instead of grabbing it within function
+    // const uid = currentUser?.uid;
 
     let categoryList = [];
     const q = query(
         collection(db, COLLECTION_CATEGORY),
-        where('uid', '==', uid) //order?
+        where('uid', '==', uid), //ordered later
     );    
     const querySnapshot = await getDocs(q);
     querySnapshot.forEach((doc) => {
@@ -151,7 +151,7 @@ export async function getCategoryList() {
     });
 
     //if the user has no categories, create a default category
-    if (categoryList.length == 0) {
+    if (categoryList.length === 0) {
         const defaultCategory = new Category(
             { title:"My Category", uid, isDefault: true });
         const docId = await addCategory(defaultCategory.toFirestore());
