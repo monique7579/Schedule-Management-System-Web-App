@@ -17,11 +17,8 @@ import { currentUser } from './firebase_auth.js';
 import { app } from './firebase_core.js';
 const db = getFirestore(app);
 
-//note: where functions that interact with the firestore database are defined
-//i.e. add event { code to add an event as a saved document in firestore}
-
-const COLLECTION_EVENTS = 'events';
-const COLLECTION_CATEGORY = 'categories';
+const COLLECTION_EVENTS = 'events'; //define collection for events
+const COLLECTION_CATEGORY = 'categories'; //define collection for categories
 
 //add new event
 export async function addEvent(event) {
@@ -58,18 +55,16 @@ export async function getSingleEvent(docId) {
     }
 }
 
-//get all events for the current user
+//get all events for the current user (by uid)
 export async function getEventList(uid) {
-    // const uid = currentUser?.uid;
-
     let eventList = [];
     const q = query(
         collection(db, COLLECTION_EVENTS),
         where('uid', '==', uid), //only gather the current user's events
-        orderBy('start', 'desc') //want to order by date? descending?
+        orderBy('start', 'desc') //order by start descending 
     );   
     const querySnapshot = await getDocs(q);
-    querySnapshot.forEach((doc) => {
+    querySnapshot.forEach((doc) => { //push into list format
         const e = doc.data();
         const event = new Event(e);
         event.set_docId(doc.id); 
@@ -133,10 +128,8 @@ export async function deleteCategory(docId) {
     await batch.commit();
 }
 
-//get all categories for the current user
-export async function getCategoryList(uid) { //pass uid as parameter instead of grabbing it within function
-    // const uid = currentUser?.uid;
-
+//get all categories for the current user (by uid)
+export async function getCategoryList(uid) {
     let categoryList = [];
     const q = query(
         collection(db, COLLECTION_CATEGORY),

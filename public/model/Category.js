@@ -1,8 +1,8 @@
 export class Category {
-    uid = null;
-    title = null;
-    isDefault = false;
-    docId = null;
+    uid = null; //user id because categories are per user
+    title = null; //a category to the user is just a name
+    isDefault = false; //must have at least the default category, so identification required in that aspect
+    docId = null; 
 
     constructor(data) {
         this.uid = data.uid;

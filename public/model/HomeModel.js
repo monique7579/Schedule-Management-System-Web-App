@@ -1,6 +1,6 @@
 export class HomeModel {
-    categoryList = [];
-    eventList = [];
+    categoryList = []; //model needs to remember the categories
+    eventList = []; //and the events
 
     constructor() {
         this.categoryList = [];
