@@ -258,24 +258,14 @@ export class HomeView extends AbstractView {
         card.className = 'mb-2'; //bootstrap style
         //HTML for the card to look how it should and include what it needs to
         card.innerHTML = `
-        <div id=${event.docId} class="card-event card"
-                tabindex="0"
-                data-bs-toggle="popover"
-                data-bs-trigger="focus"
-                data-bs-placement="left"
-                data-bs-html="true"
-                data-bs-content='<button type="button" class="btn btn-clay btn-sm">Edit</button>'>
+        <div id=${event.docId} class="card-event card">
             <h6 class="card-title ms-2 mt-1 text-clay">${event.title}</h6>
             <small class="text-clay ms-2 mt-1">${event.description || 'no description'}</small>
             <small class="text-clay ms-2 mt-1">${event.category}</small>
             <small class="text-clay ms-2 mt-1">${new Date(event.start).toLocaleString()} - ${new Date(event.finish).toLocaleString()}</small>
         </div>
        `;
-        const popoverTarget = card.querySelector('.card-event'); //grab card
-        new bootstrap.Popover(popoverTarget, {
-            html: true
-        }); // Initialize popover on card
-        return card; //return card for renderEventList function
+       return card; //return card for renderEventList function
     }
 
     //function that renders calendar (called in update view)
