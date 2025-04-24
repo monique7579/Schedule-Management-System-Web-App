@@ -66,8 +66,7 @@ export class HomeController {
         const form = e.target;
         const title = form.title.value;
         const description = form.description.value;
-        //to do: somehow every category that exists is getting added to the event on event creation, need to fix
-        const category = form.category.textContent; //text content to show the actual title of category not id
+        const category = form.category.options[form.category.selectedIndex].textContent; //text content to show the actual title of category not id
         const start = form.start.value;
         const finish = form.finish.value;
         const reminderBool = form.reminderBool.checked;
