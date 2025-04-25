@@ -160,26 +160,26 @@ export class HomeView extends AbstractView {
             <div class="modal-body">
             <form name="formAddEvent">
               <div class="mb-3">
-                <label class="form-label">Title</label>
-                <input type="text" class="form-control" name="title" required minlength="3">
+                <label class="form-label ">Title</label>
+                <input type="text" class="form-control text-clay" name="title" required minlength="3">
               </div>
               <div class="mb-3">
                 <label class="form-label">Description</label>
-                <textarea class="form-control" name="description" rows="10" minlength="5"></textarea>
+                <textarea class="form-control text-clay" name="description" rows="10"></textarea>
               </div>
               <div class="mb-3"> 
                 <label class="form-label">Category</label>
-                <select class="form-select" id="categoryDropdown" name="category" aria-label="Default select example">
+                <select class="form-select text-clay" id="categoryDropdown" name="category" aria-label="Default select example">
                     
                 </select>
               </div>
               <div class="mb-3"> 
                 <label class="form-label">Start -</label>
-                <input type="datetime-local" class="form-control" name="start">
+                <input type="datetime-local" class="form-control text-clay" name="start" required>
               </div>
               <div class="mb-3"> 
                 <label class="form-label">Fin</label>
-                <input type="datetime-local" class="form-control" name="finish">
+                <input type="datetime-local" class="form-control text-clay" name="finish" required>
               </div>
               <div class="mb-3"> 
                 <div class="form-check mb-3">
@@ -188,7 +188,7 @@ export class HomeView extends AbstractView {
                     Reminder
                     </label>
                 </div>
-                <select class="form-select" name="reminderTime" aria-label="Default select example">
+                <select class="form-select text-clay" name="reminderTime" aria-label="Default select example" disabled>
                     <option selected>Open this select menu</option>
                     <option value="1">At event time</option>
                     <option value="2">10 minutes before</option>
@@ -207,6 +207,15 @@ export class HomeView extends AbstractView {
         eventColumn.appendChild(addEventModal); //add the modal to the event column
         eventColumn.appendChild(addEvent); //add the button the the most
 
+        setTimeout(() => {
+            const checkbox = addEventModal.querySelector('input[name="reminderBool"]');
+            const select = addEventModal.querySelector('select[name="reminderTime"]');
+
+            checkbox.addEventListener('change', () => {
+                select.disabled = !checkbox.checked;
+            });
+        }, 0);
+
         const events = this.renderEventList(); //call function that renders and returns event list
         eventColumn.appendChild(events); //add event lis tthe column div
 
@@ -215,7 +224,8 @@ export class HomeView extends AbstractView {
 
     //add categories to the dropdown in the event add form, this is done dynamically since each user has a seperate list of categories that is saved in firestore and in model
     async populateCategoryDropdown() {
-        const select = document.getElementById('categoryDropdown'); //grab the corresponding drop down from the modal
+        const select = document.getElementById('categoryDropdown');
+        const selectEdit = document.getElementById('categoryDropdown-edit'); //grab the corresponding drop down from the modal
         if (!select) { //if not found (should never happen)
             console.log('didnt find categorydropdown');
             return;
@@ -232,12 +242,36 @@ export class HomeView extends AbstractView {
         }
     }
 
+    async populateCategoryDropdownEdit() {
+        // const select = document.getElementById('categoryDropdown'); 
+        const select = document.getElementById('categoryDropdown-edit'); //grab the corresponding drop down from the modal
+        if (!select) { //if not found (should never happen)
+            console.log('didnt find categorydropdown');
+            return;
+        }
+        try {
+            for (const category of this.controller.model.categoryList) { //for every category from the modal
+                const option = document.createElement('option'); //create option
+                option.value = category.docId; //the value is docId for id purposes
+                option.textContent = category.title; //shows as the category title
+                select.appendChild(option); //add option to drop down
+            }
+        } catch (e) { //handle any error that occurs
+            console.error("Error loading categories", e);
+        }
+
+        //try 
+
+    }
+
     //function to render event list, called in buildEventColumn
     renderEventList() {
         const list = document.createElement('div'); //create div to hold all elements in the list
         list.id = 'event-list'; //id, also used for css styling in this case
         list.className = 'mt-3 overflow-auto'; //bootstrap styling
         list.style = "max-height: 500px;"; //caps off how tall the list can appear no matter how many events (becomes scrollable)
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
 
         if (this.controller.model.eventList.length === 0) { //if no events upcoming 
             const noData = document.createElement('div');
@@ -245,8 +279,14 @@ export class HomeView extends AbstractView {
             list.appendChild(noData);
         } else {
             for (const event of this.controller.model.eventList) { //for every event in list
-                const card = this.createCard(event); //call function that creates card
-                list.appendChild(card); //add card to list div
+                //if fin date is in the future
+                const finishDate = new Date(event.finish);
+                if (finishDate >= today) {
+                    const card = this.createCard(event); //call function that creates card
+                    list.appendChild(card); //add card to list div
+                }
+                //if category is checked
+
             }
         }
         return list; //return the list to be added the column
@@ -265,7 +305,7 @@ export class HomeView extends AbstractView {
             <small class="text-clay ms-2 mt-1">${new Date(event.start).toLocaleString()} - ${new Date(event.finish).toLocaleString()}</small>
         </div>
        `;
-       return card; //return card for renderEventList function
+        return card; //return card for renderEventList function
     }
 
     //function that renders calendar (called in update view)
@@ -375,6 +415,7 @@ export class HomeView extends AbstractView {
     async attachEvents() {
         console.log('HomeView.attachEvents() called');
         await this.populateCategoryDropdown(); //could be placed elsewhere but this worked for now
+        await this.populateCategoryDropdownEdit(); //could be placed elsewhere but this worked for now
 
         const nextMonthBtn = document.getElementById('nextMonthBtn'); //grab next month btn
         nextMonthBtn.onclick = this.controller.onClickNextMonthButton; //attach next month listener (defined in HomeController.js)
@@ -385,11 +426,30 @@ export class HomeView extends AbstractView {
 
         document.forms.formAddCategory.onsubmit = this.controller.onSubmitAddCategory; //attach listener to submit button of AddCategory modal/form (defined in HomeController.js)
 
-        document.querySelectorAll('.card-event').forEach( card => {
+        document.querySelectorAll('.card-event').forEach(card => {
             card.onclick = this.controller.onClickEventCard; //left click
             card.oncontextmenu = this.controller.onRightClickEventCard; //right click
         });
         //to do: attach listener to click on event (i.e. right click brings up edit)
+
+        //this makes it so that the reminder drop down in the edit model is only enabled when the checkbox is checked
+        const checkbox = document.getElementById('checkDefaultEdit');
+        const select = document.getElementById('dropdown-remindertime');
+
+        if (checkbox && select) {
+            checkbox.addEventListener('change', () => {
+                select.disabled = !checkbox.checked;
+            });
+        }
+
+        // setTimeout(() => {
+        //     const checkbox = editEventModal.querySelector('input[name="reminderBool"]');
+        //     const select = editEventModal.querySelector('select[name="reminderTime"]');
+
+        //     checkbox.addEventListener('change', () => {
+        //         select.disabled = !checkbox.checked;
+        //     });
+        // }, 0);
 
     }
 
