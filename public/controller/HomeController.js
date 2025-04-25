@@ -21,8 +21,10 @@ export class HomeController {
         this.onClickNextMonthButton = this.onClickNextMonthButton.bind(this);
         this.onClickEventCard = this.onClickEventCard.bind(this);
         this.onRightClickEventCard = this.onRightClickEventCard.bind(this);
-        this.onClickCategoryCheck = this.onClickCategoryCheck.bind(this);
+        // this.onClickCategoryCheck = this.onClickCategoryCheck.bind(this);
         this.onRightClickCategoryCheck = this.onRightClickCategoryCheck.bind(this);
+        this.onClickEditButton = this.onClickEditButton.bind(this);
+        this.onClickDeleteButton = this.onClickDeleteButton.bind(this);
     }
 
     setView(view) {
@@ -83,11 +85,11 @@ export class HomeController {
             return;
         }
 
-        const event = new Event ({ //create event, if key+value have the same name you can just put one (i.e. name instead of name: name)
+        const event = new Event({ //create event, if key+value have the same name you can just put one (i.e. name instead of name: name)
             uid, title, description, category, start, finish,
             reminderBool, reminderTime,
         });
-        
+
         console.log(event);//checking the validity of the data retrieved from form //testing purpose
 
         startSpinner();
@@ -96,14 +98,14 @@ export class HomeController {
             event.set_docId(docId);
             stopSpinner(); //time consuming process done, stop spinner
             e.target.reset(); //clear form
-            console.log('Added event'); 
+            console.log('Added event');
             const b = document.getElementById('modalAddEvent-closeBtn');//
             b.click();
         } catch (e) {
             stopSpinner();
             console.error(e);
             alert('Error adding event to Firestore');
-            return; 
+            return;
         }
         this.model.prependEvent(event); //update model, model + firestore should match
         this.model.orderEventListByStartTime(); //model should be ordered
@@ -116,7 +118,7 @@ export class HomeController {
         e.preventDefault();
         const uid = currentUser.uid;
         const title = e.target.title.value;//can add .toLowerCase() if we want
-        
+
         for (let i = 0; i < this.model.categoryList.length; i++) { //this makes it so they user cannot create duplicate categories (not case sensitive)
             if (title === this.model.categoryList[i].title) {
                 alert(`${title} already exists.`);
@@ -139,7 +141,7 @@ export class HomeController {
             stopSpinner();
             console.error(e);
             alert('Error adding category to Firestore');
-            return; 
+            return;
         }
         this.model.prependCategory(category);
         this.model.orderCategoryListAlphabetically();
@@ -162,7 +164,7 @@ export class HomeController {
         this.view.render(); //rerender the view
     }
 
-    
+
 
     //to do: listener for left or right clicking event (if that is how we will access options)
 
@@ -194,21 +196,30 @@ export class HomeController {
         modal.show();
     }
 
-    async onClickCategoryCheck(e) {
-        console.log('onClickCategoryCheck called');
-        // const checkbox = e.target;
-        // const docId = checkbox.id;
-        // const category = this.model.getCategoryByDocId(docId);
-        // if (!category) {
-        //     console.error('onRightClickCategoryCheck: category not found', docId);
-        // }
-        // const form = document.forms.forEditCategory;
-        // form.title.value = category.title;
-        
-        // form.onsubmit = function(e) {
-        //     e.preventDefault();
-        //     this.onSubmitEditCategoryForm(e, category);
-        // }.bind(this)
+    async onClickEditButton(e) { //this is for editing categories
+        console.log('onClickEditButton called');
+
+        const form = document.forms.formEditorDeleteCategory; //grab id from modal the appears when category is clicked
+        const docId = form.dataset.docId;
+
+        const category = this.model.getCategoryByDocId(docId); //get category
+        console.log(category); //check, testing purposes
+        if (!category) {
+            console.error('onRightClickCategoryCheck: category not found', docId);
+        }
+        const formEdit = document.forms.formEditCategory; //grab form for editing
+        formEdit.title.value = category.title; //fill with current data
+
+        form.onsubmit = function (e) {
+            e.preventDefault();
+            this.onSubmitEditCategoryForm(e, category);
+        }.bind(this)
+
+        const b = document.getElementById('modalEditorDeleteCategory-closeBtn'); //close the edit/delete modal when click button
+        b.click();
+
+        const modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('modal-edit-category')); //show actual edit modal
+        modal.show();
     }
 
     //on submit edit form
@@ -248,7 +259,7 @@ export class HomeController {
             return;
         }
 
-        const update = { title, description, category, start, finish, reminderBool, reminderTime};
+        const update = { title, description, category, start, finish, reminderBool, reminderTime };
         startSpinner();
         try {
             await updateEvent(event.docId, update);
@@ -257,6 +268,7 @@ export class HomeController {
             const b = document.getElementById('modalEditEvent-closeBtn');
             b.click();
             stopSpinner();
+            this.view.render();
         } catch (e) {
             stopSpinner();
             console.error(e);
@@ -267,22 +279,26 @@ export class HomeController {
     }
 
     async onSubmitEditCategoryForm(e, category) {
+        // e.preventDefault();
         const form = document.forms.forEditCategory;
         const title = form.title.value;
 
-        if (title == category.title) {
+        if (title === category.title) {
             console.log('no change');
             const b = document.getElementById('modalEditCategory-closeBtn');
             b.click();
             return;
         }
-        const update = {title}; 
+        const update = { title };
         startSpinner();
-        try{
+        try {
             await updateCategory(category.docId, update);
             this.model.updateCategory(category, update);
             this.model.orderCategoryListAlphabetically();
             stopSpinner();
+            const b = document.getElementById('modalEditorDeleteCategory-closeBtn');
+            b.click();
+            this.view.render();
         } catch (e) {
             stopSpinner();
             console.error(e);
@@ -330,9 +346,28 @@ export class HomeController {
             console.error('onRightClickCategoryCheck: category not found', docId);
         }
 
+        // modal-editordelete-category
+        const form = document.forms.formEditorDeleteCategory;
+        form.dataset.docId = docId;
+        const modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('modal-editordelete-category'));
+        modal.show();
+
+
+    }
+
+    async onClickDeleteButton(e) {
+        console.log('onClickDeleteButton clicked')
+        const form = document.forms.formEditorDeleteCategory; //grab id from modal the appears when category is clicked
+        const docId = form.dataset.docId;
+
+        const category = this.model.getCategoryByDocId(docId); //get category
+        console.log(category); //check, testing purposes
+        //don't just delete
         if (!confirm('Delete this category')) {
             return; //cancel delete
         }
+        const b = document.getElementById('modalEditorDeleteCategory-closeBtn'); //close the edit/delete modal when click button
+        b.click();
         startSpinner();
         try {
             await deleteCategory(category.docId);
@@ -345,6 +380,7 @@ export class HomeController {
             alert('Error deleting category');
             return;
         }
+        
     }
     //to do: listener for category filter change?
     //to do: listener for updating event
@@ -358,5 +394,5 @@ export class HomeController {
     //note: these are the functions that are attached to buttons in HomeView.js attachEvents()
 
 
-    
+
 }
