@@ -102,10 +102,11 @@ export class HomeView extends AbstractView {
         } else {
             for (const category of this.controller.model.categoryList) { //for every category in the list from the model
                 const categoryCheck = document.createElement('div'); //create a div for form to go in
-                categoryCheck.className = 'form-check category-checkbox'; //create check box with label == category title
+                categoryCheck.className = 'form-check category-checkbox-div text-clay'; //create check box with label == category title
+                categoryCheck.id = `${category.docId}`;
                 categoryCheck.innerHTML = `
-                    <input class="form-check-input category-checkbox btn-clay" type="checkbox" value="" id="${category.docId}" checked>
-                    <label class="form-check-label" for="${category.docId}">
+                    <input class="form-check-input category-checkbox btn-clay" type="checkbox" value="" id="${category.docId}-input" checked>
+                    <label class="form-check-label" for="${category.docId}-input">
                         ${category.title}
                     </label>`
                 list.appendChild(categoryCheck); //add to list
@@ -271,7 +272,7 @@ export class HomeView extends AbstractView {
         list.className = 'mt-3 overflow-auto'; //bootstrap styling
         list.style = "max-height: 500px;"; //caps off how tall the list can appear no matter how many events (becomes scrollable)
         const today = new Date();
-        today.setHours(0, 0, 0, 0);
+        // today.setHours(0, 0, 0, 0);
 
         if (this.controller.model.eventList.length === 0) { //if no events upcoming 
             const noData = document.createElement('div');
@@ -430,6 +431,14 @@ export class HomeView extends AbstractView {
             card.onclick = this.controller.onClickEventCard; //left click
             card.oncontextmenu = this.controller.onRightClickEventCard; //right click
         });
+
+        document.querySelectorAll('.category-checkbox').forEach(checkbox => {
+            checkbox.onclick = this.controller.onClickCategoryCheck; //left click
+        });
+
+        document.querySelectorAll('.category-checkbox-div').forEach(checkbox => {
+            checkbox.oncontextmenu = this.controller.onRightClickCategoryCheck; //right click
+        });
         //to do: attach listener to click on event (i.e. right click brings up edit)
 
         //this makes it so that the reminder drop down in the edit model is only enabled when the checkbox is checked
@@ -441,15 +450,6 @@ export class HomeView extends AbstractView {
                 select.disabled = !checkbox.checked;
             });
         }
-
-        // setTimeout(() => {
-        //     const checkbox = editEventModal.querySelector('input[name="reminderBool"]');
-        //     const select = editEventModal.querySelector('select[name="reminderTime"]');
-
-        //     checkbox.addEventListener('change', () => {
-        //         select.disabled = !checkbox.checked;
-        //     });
-        // }, 0);
 
     }
 

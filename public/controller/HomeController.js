@@ -2,7 +2,7 @@ import { HomeModel } from "../model/HomeModel.js";
 import { Event } from '../model/Event.js';
 import { Category } from '../model/Category.js';
 import { currentUser } from './firebase_auth.js';
-import { addCategory, addEvent, getCategoryList, getEventList, deleteEvent } from './firestore_controller.js';
+import { addCategory, addEvent, getCategoryList, getEventList, deleteEvent, deleteCategory } from './firestore_controller.js';
 import { startSpinner, stopSpinner } from "../view/util.js";
 
 export const glHomeModel = new HomeModel();
@@ -21,6 +21,8 @@ export class HomeController {
         this.onClickNextMonthButton = this.onClickNextMonthButton.bind(this);
         this.onClickEventCard = this.onClickEventCard.bind(this);
         this.onRightClickEventCard = this.onRightClickEventCard.bind(this);
+        this.onClickCategoryCheck = this.onClickCategoryCheck.bind(this);
+        this.onRightClickCategoryCheck = this.onRightClickCategoryCheck.bind(this);
     }
 
     setView(view) {
@@ -72,6 +74,14 @@ export class HomeController {
         const finish = form.finish.value;
         const reminderBool = form.reminderBool.checked;
         const reminderTime = form.reminderTime.value;
+
+        //make sure the start date is BEFORE the finish date
+        const startDate = new Date(start);
+        const finishDate = new Date(finish);
+        if (startDate > finishDate) {
+            alert('Start has to be a earlier date and time than finish!');
+            return;
+        }
 
         const event = new Event ({ //create event, if key+value have the same name you can just put one (i.e. name instead of name: name)
             uid, title, description, category, start, finish,
@@ -184,6 +194,23 @@ export class HomeController {
         modal.show();
     }
 
+    async onClickCategoryCheck(e) {
+        console.log('onClickCategoryCheck called');
+        // const checkbox = e.target;
+        // const docId = checkbox.id;
+        // const category = this.model.getCategoryByDocId(docId);
+        // if (!category) {
+        //     console.error('onRightClickCategoryCheck: category not found', docId);
+        // }
+        // const form = document.forms.forEditCategory;
+        // form.title.value = category.title;
+        
+        // form.onsubmit = function(e) {
+        //     e.preventDefault();
+        //     this.onSubmitEditCategoryForm(e, category);
+        // }.bind(this)
+    }
+
     //on submit edit form
     async onSubmitEventEditForm(e, event) {
         const form = document.forms.formEditEvent;
@@ -212,6 +239,14 @@ export class HomeController {
             return;
         }
 
+        //make sure start is before fin
+        const startDate = new Date(start);
+        const finishDate = new Date(finish);
+        if (startDate > finishDate) {
+            alert('Start has to be a earlier date and time than finish!');
+            return;
+        }
+
         const update = { title, description, category, start, finish, reminderBool, reminderTime};
         startSpinner();
         try {
@@ -223,6 +258,31 @@ export class HomeController {
             stopSpinner();
             console.error(e);
             alert('Error updating event');
+            return;
+        }
+    }
+
+    async onSubmitEditCategoryForm(e, category) {
+        const form = document.forms.forEditCategory;
+        const title = form.title.value;
+
+        if (title == category.title) {
+            console.log('no change');
+            const b = document.getElementById('modalEditCategory-closeBtn');
+            b.click();
+            return;
+        }
+        const update = {title}; 
+        startSpinner();
+        try{
+            await updateCategory(category.docId, update);
+            this.model.updateCategory(category, update);
+            this.model.orderCategoryListAlphabetically();
+            stopSpinner();
+        } catch (e) {
+            stopSpinner();
+            console.error(e);
+            alert('Error updating category');
             return;
         }
     }
@@ -251,7 +311,34 @@ export class HomeController {
         } catch (e) {
             stopSpinner();
             console.error(e);
-            alert('Error deleting event note');
+            alert('Error deleting event');
+            return;
+        }
+    }
+
+    async onRightClickCategoryCheck(e) {
+        console.log('onRightClickCategoryCheck called');
+        e.preventDefault();
+        const checkbox = e.currentTarget;
+        const docId = checkbox.id;
+        const category = this.model.getCategoryByDocId(docId);
+        if (!category) {
+            console.error('onRightClickCategoryCheck: category not found', docId);
+        }
+
+        if (!confirm('Delete this category')) {
+            return; //cancel delete
+        }
+        startSpinner();
+        try {
+            await deleteCategory(category.docId);
+            this.model.deleteCategoryByDocId(category.docId);
+            stopSpinner();
+            this.view.render();
+        } catch (e) {
+            stopSpinner();
+            console.error(e);
+            alert('Error deleting category');
             return;
         }
     }
