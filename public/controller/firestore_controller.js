@@ -28,11 +28,14 @@ export async function addEvent(event) {
     return docRef.id; //docId is automatically assigned by firestore
 }
 
-//update event using full event object because event is complex and has many fields
-export async function updateEvent(event) {
-    const docRef = doc(db, COLLECTION_EVENTS, event.docId);
-    console.log('Updating event from firestore');
-    await updateDoc(docRef, event.toFirestore());
+//update event
+export async function updateEvent(docId, update) {
+    // const docRef = doc(db, COLLECTION_EVENTS, event.docId);
+    // await updateDoc(docRef, event.toFirestore());
+
+    const collRef = collection(db, COLLECTION_EVENTS);
+    const docRef = doc(collRef, docId);
+    await updateDoc(docRef, update);
 }
 
 //delete event by docId

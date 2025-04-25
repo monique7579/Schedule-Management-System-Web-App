@@ -2,7 +2,7 @@ import { HomeModel } from "../model/HomeModel.js";
 import { Event } from '../model/Event.js';
 import { Category } from '../model/Category.js';
 import { currentUser } from './firebase_auth.js';
-import { addCategory, addEvent, getCategoryList, getEventList, deleteEvent } from './firestore_controller.js';
+import { addCategory, addEvent, getCategoryList, getEventList, deleteEvent, deleteCategory } from './firestore_controller.js';
 import { startSpinner, stopSpinner } from "../view/util.js";
 
 export const glHomeModel = new HomeModel();
@@ -19,7 +19,10 @@ export class HomeController {
         this.onSubmitAddCategory = this.onSubmitAddCategory.bind(this);
         this.onClickPrevMonthButton = this.onClickPrevMonthButton.bind(this);
         this.onClickNextMonthButton = this.onClickNextMonthButton.bind(this);
-        this.onClickDeleteEvent = this.onClickDeleteEvent.bind(this);
+        this.onClickEventCard = this.onClickEventCard.bind(this);
+        this.onRightClickEventCard = this.onRightClickEventCard.bind(this);
+        this.onClickCategoryCheck = this.onClickCategoryCheck.bind(this);
+        this.onRightClickCategoryCheck = this.onRightClickCategoryCheck.bind(this);
     }
 
     setView(view) {
@@ -71,6 +74,14 @@ export class HomeController {
         const finish = form.finish.value;
         const reminderBool = form.reminderBool.checked;
         const reminderTime = form.reminderTime.value;
+
+        //make sure the start date is BEFORE the finish date
+        const startDate = new Date(start);
+        const finishDate = new Date(finish);
+        if (startDate > finishDate) {
+            alert('Start has to be a earlier date and time than finish!');
+            return;
+        }
 
         const event = new Event ({ //create event, if key+value have the same name you can just put one (i.e. name instead of name: name)
             uid, title, description, category, start, finish,
@@ -151,32 +162,186 @@ export class HomeController {
         this.view.render(); //rerender the view
     }
 
-    //listener for delete event
-    async onClickDeleteEvent(e) {
-        console.log('OnClickDeleteEvent called');
-        e.preventDefault();
-        
-        //to do: need way to get docId from however the listener is triggered
-        //i think this depends on what method we use for deleting the event (right click or button)
-        // const docId = e.currentTarget.card.id;
-        // const eventNote = this.model.getEventByDocId(docId); 
     
-        startSpinner();
-        try {
-            await deleteEvent(docId); //delete from firestore
-            this.model.deleteEventByDocId(docId); //delete from model
-            stopSpinner();
-            this.view.render(); //rerender the view
-        } catch(e) {
-            stopSpinner();
-            console.error(e);
-            alert('Error deleting event from Firestore');
-            return;
-        }
-        
-    }
 
     //to do: listener for left or right clicking event (if that is how we will access options)
+
+    async onClickEventCard(e) {
+        console.log('onClickEventCard called');
+        const card = e.currentTarget;
+        const docId = card.id;
+        const event = this.model.getEventByDocId(docId);
+        if (!event) {
+            console.error('onClickEventCard: event not found', docId);
+            return;
+        }
+
+        const form = document.forms.formEditEvent;
+        form.title.value = event.title;
+        form.description.value = event.description;
+        // category
+        //start
+        //find
+        //reminder boo
+        //reminder time
+
+        form.onsubmit = function (e) {
+            e.preventDefault();
+            this.onSubmitEventEditForm(e, event);
+        }.bind(this);
+
+        const modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('modal-edit'));
+        modal.show();
+    }
+
+    async onClickCategoryCheck(e) {
+        console.log('onClickCategoryCheck called');
+        // const checkbox = e.target;
+        // const docId = checkbox.id;
+        // const category = this.model.getCategoryByDocId(docId);
+        // if (!category) {
+        //     console.error('onRightClickCategoryCheck: category not found', docId);
+        // }
+        // const form = document.forms.forEditCategory;
+        // form.title.value = category.title;
+        
+        // form.onsubmit = function(e) {
+        //     e.preventDefault();
+        //     this.onSubmitEditCategoryForm(e, category);
+        // }.bind(this)
+    }
+
+    //on submit edit form
+    async onSubmitEventEditForm(e, event) {
+        const form = document.forms.formEditEvent;
+
+        // const uid = currentUser.uid;
+        const title = form.title.value;
+        const description = form.description.value;
+        const category = form.category.options[form.category.selectedIndex].textContent; //text content to show the actual title of category not id
+        const start = form.start.value;
+        const finish = form.finish.value;
+        const reminderBool = form.reminderBool.checked;
+        const reminderTime = form.reminderTime.value;
+
+        //check if anything has changed
+        if (title == event.title &&
+            description == event.description &&
+            category == event.category &&
+            start == event.start &&
+            finish == event.finish &&
+            reminderBool == event.reminderBool &&
+            reminderTime == event.reminderTime
+        ) {
+            console.log('no change');
+            const b = document.getElementById('modalEditEvent-closeBtn');
+            b.click();
+            return;
+        }
+
+        //make sure start is before fin
+        const startDate = new Date(start);
+        const finishDate = new Date(finish);
+        if (startDate > finishDate) {
+            alert('Start has to be a earlier date and time than finish!');
+            return;
+        }
+
+        const update = { title, description, category, start, finish, reminderBool, reminderTime};
+        startSpinner();
+        try {
+            await updateEvent(event.docId, update);
+            this.model.updateEventList(event, update);
+            this.model.orderEventListByStartTime();
+            stopSpinner();
+        } catch (e) {
+            stopSpinner();
+            console.error(e);
+            alert('Error updating event');
+            return;
+        }
+    }
+
+    async onSubmitEditCategoryForm(e, category) {
+        const form = document.forms.forEditCategory;
+        const title = form.title.value;
+
+        if (title == category.title) {
+            console.log('no change');
+            const b = document.getElementById('modalEditCategory-closeBtn');
+            b.click();
+            return;
+        }
+        const update = {title}; 
+        startSpinner();
+        try{
+            await updateCategory(category.docId, update);
+            this.model.updateCategory(category, update);
+            this.model.orderCategoryListAlphabetically();
+            stopSpinner();
+        } catch (e) {
+            stopSpinner();
+            console.error(e);
+            alert('Error updating category');
+            return;
+        }
+    }
+
+    //listener for delete event
+    async onRightClickEventCard(e) {
+        console.log('onRightClickEventCard called');
+        e.preventDefault();
+        const card = e.currentTarget;
+        const docId = card.id;
+        const event = this.model.getEventByDocId(docId);
+        if (!event) {
+            console.error('onRightClickEventCard: event not found', docId);
+            return;
+        }
+        //confirm delete 
+        if (!confirm('Delete this event')) {
+            return; //cancel delete
+        }
+        startSpinner();
+        try {
+            await deleteEvent(event.docId);
+            this.model.deleteEventByDocId(event.docId);
+            stopSpinner();
+            this.view.render();
+        } catch (e) {
+            stopSpinner();
+            console.error(e);
+            alert('Error deleting event');
+            return;
+        }
+    }
+
+    async onRightClickCategoryCheck(e) {
+        console.log('onRightClickCategoryCheck called');
+        e.preventDefault();
+        const checkbox = e.currentTarget;
+        const docId = checkbox.id;
+        const category = this.model.getCategoryByDocId(docId);
+        if (!category) {
+            console.error('onRightClickCategoryCheck: category not found', docId);
+        }
+
+        if (!confirm('Delete this category')) {
+            return; //cancel delete
+        }
+        startSpinner();
+        try {
+            await deleteCategory(category.docId);
+            this.model.deleteCategoryByDocId(category.docId);
+            stopSpinner();
+            this.view.render();
+        } catch (e) {
+            stopSpinner();
+            console.error(e);
+            alert('Error deleting category');
+            return;
+        }
+    }
     //to do: listener for category filter change?
     //to do: listener for updating event
     //to do: listener for deleting category

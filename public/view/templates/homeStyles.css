@@ -20,40 +20,20 @@
     --light-color: #eec9b2;
 }
 .modal-clay {
-    color: #cc9674;
+    color: #cc9674 !important;
 }
 .text-clay {
     color: #cc9674;
 }
+textarea.text-clay {
+    color: #cc9674 !important;
+}
+input.text-clay {
+    color: #cc9674 !important;
+}
 #event-list::-webkit-scrollbar {
     display: none;  /* Chrome and Safari */
 }
-
-/*
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: "Helvetica", sans-serif;
-}
-body {
-    min-height: 100vh;
-    display: flex;
-    padding: 7%;
-  
-}
-
-.container {
-    position: relative;
-    width: 100%;
-    min-height: 850px;
-    margin: 0 auto;
-    padding: 5px;
-    color: #fff;
-    display: flex;
-    border-radius: 10px;
-}
-*/
 .left {
     width: 20%;
     padding: 20px;
