@@ -30,11 +30,9 @@ export async function addEvent(event) {
 
 //update event
 export async function updateEvent(docId, update) {
-    // const docRef = doc(db, COLLECTION_EVENTS, event.docId);
-    // await updateDoc(docRef, event.toFirestore());
-
     const collRef = collection(db, COLLECTION_EVENTS);
     const docRef = doc(collRef, docId);
+    console.log('Updating event in firestore')
     await updateDoc(docRef, update);
 }
 
@@ -89,8 +87,9 @@ export async function addCategory(category) {
 
 //update category using docId and update object
 export async function updateCategory(docId, update) {
-    const docRef = doc(db, COLLECTION_CATEGORY, docId);
-    const snapshot = await getDoc(docRef);
+    const collRef = collection(db, COLLECTION_CATEGORY);
+    const docRef = doc(collRef, docId);
+    const snapshot = await getDoc(docRef); //fetch the category doc to check default
     const category = snapshot.data();
 
     if (category.isDefault) { //preserve default category
