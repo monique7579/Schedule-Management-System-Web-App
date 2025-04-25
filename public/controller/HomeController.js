@@ -2,7 +2,7 @@ import { HomeModel } from "../model/HomeModel.js";
 import { Event } from '../model/Event.js';
 import { Category } from '../model/Category.js';
 import { currentUser } from './firebase_auth.js';
-import { addCategory, addEvent, getCategoryList, getEventList, deleteEvent, deleteCategory } from './firestore_controller.js';
+import { addCategory, addEvent, getCategoryList, getEventList, deleteEvent, deleteCategory, updateEvent } from './firestore_controller.js';
 import { startSpinner, stopSpinner } from "../view/util.js";
 
 export const glHomeModel = new HomeModel();
