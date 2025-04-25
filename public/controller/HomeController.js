@@ -2,7 +2,7 @@ import { HomeModel } from "../model/HomeModel.js";
 import { Event } from '../model/Event.js';
 import { Category } from '../model/Category.js';
 import { currentUser } from './firebase_auth.js';
-import { addCategory, addEvent, getCategoryList, getEventList, deleteEvent, deleteCategory, updateEvent } from './firestore_controller.js';
+import { addCategory, addEvent, getCategoryList, getEventList, deleteEvent, deleteCategory, updateEvent, updateCategory } from './firestore_controller.js';
 import { startSpinner, stopSpinner } from "../view/util.js";
 
 export const glHomeModel = new HomeModel();
@@ -198,28 +198,27 @@ export class HomeController {
 
     async onClickEditButton(e) { //this is for editing categories
         console.log('onClickEditButton called');
-
         const form = document.forms.formEditorDeleteCategory; //grab id from modal the appears when category is clicked
         const docId = form.dataset.docId;
-
         const category = this.model.getCategoryByDocId(docId); //get category
         console.log(category); //check, testing purposes
         if (!category) {
-            console.error('onRightClickCategoryCheck: category not found', docId);
+            console.error('onClickEditButton: category not found', docId);
+            return;
         }
         const formEdit = document.forms.formEditCategory; //grab form for editing
         formEdit.title.value = category.title; //fill with current data
 
-        form.onsubmit = function (e) {
+        formEdit.onsubmit = function (e) {
             e.preventDefault();
             this.onSubmitEditCategoryForm(e, category);
-        }.bind(this)
+        }.bind(this);
 
-        const b = document.getElementById('modalEditorDeleteCategory-closeBtn'); //close the edit/delete modal when click button
-        b.click();
+        const editDeleteModal = bootstrap.Modal.getInstance(document.getElementById('modal-editordelete-category')); //close the edit/delete modal when click button
+        editDeleteModal.hide();
 
-        const modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('modal-edit-category')); //show actual edit modal
-        modal.show();
+        const editModal = bootstrap.Modal.getOrCreateInstance(document.getElementById('modal-edit-category')); //show actual edit modal
+        editModal.show();
     }
 
     //on submit edit form
@@ -279,30 +278,32 @@ export class HomeController {
     }
 
     async onSubmitEditCategoryForm(e, category) {
-        // e.preventDefault();
-        const form = document.forms.forEditCategory;
+        console.log('onSubmitEditCategoryForm called');
+        const form = document.forms.formEditCategory;
         const title = form.title.value;
+
+        console.log("Category retrieved from the form: ",category);
 
         if (title === category.title) {
             console.log('no change');
-            const b = document.getElementById('modalEditCategory-closeBtn');
-            b.click();
+            const modal = bootstrap.Modal.getInstance(document.getElementById('modal-edit-category'));
+            modal.hide();
             return;
         }
         const update = { title };
         startSpinner();
         try {
             await updateCategory(category.docId, update);
-            this.model.updateCategory(category, update);
+            this.model.updateCategoryList(category, update);
             this.model.orderCategoryListAlphabetically();
             stopSpinner();
-            const b = document.getElementById('modalEditorDeleteCategory-closeBtn');
-            b.click();
+            const modal = bootstrap.Modal.getInstance(document.getElementById('modal-edit-category'));
+            modal.hide();
             this.view.render();
         } catch (e) {
             stopSpinner();
             console.error(e);
-            alert('Error updating category');
+            alert(e.message || 'Error updating category');
             return;
         }
     }
@@ -344,7 +345,9 @@ export class HomeController {
         const category = this.model.getCategoryByDocId(docId);
         if (!category) {
             console.error('onRightClickCategoryCheck: category not found', docId);
+            return;
         }
+        console.log("Category from right click: ", category);
 
         // modal-editordelete-category
         const form = document.forms.formEditorDeleteCategory;
@@ -383,9 +386,6 @@ export class HomeController {
         
     }
     //to do: listener for category filter change?
-    //to do: listener for updating event
-    //to do: listener for deleting category
-    //to do: listener for updating category
 
 
     //instruction:: DELETE BEFORE SUBMISSION
