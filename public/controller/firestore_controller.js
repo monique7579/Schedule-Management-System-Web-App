@@ -28,7 +28,7 @@ export async function addEvent(event) {
     return docRef.id; //docId is automatically assigned by firestore
 }
 
-//update event using full event object because event is complex and has many fields
+//update event
 export async function updateEvent(docId, update) {
     // const docRef = doc(db, COLLECTION_EVENTS, event.docId);
     // await updateDoc(docRef, event.toFirestore());
@@ -41,6 +41,7 @@ export async function updateEvent(docId, update) {
 //delete event by docId
 export async function deleteEvent(docId) {
     const docRef = doc(db, COLLECTION_EVENTS, docId);
+    console.log('Deleting event from firestore');
     await deleteDoc(docRef);
 }
 
@@ -81,8 +82,8 @@ export async function getEventList(uid) {
 //add new category
 export async function addCategory(category) {
     const collRef = collection(db, COLLECTION_CATEGORY);
-    const docRef = await addDoc(collRef, category);
     console.log("Writing category to firestore");
+    const docRef = await addDoc(collRef, category);
     return docRef.id;
 }
 
@@ -96,12 +97,13 @@ export async function updateCategory(docId, update) {
         throw new Error("Default category cannot be updated");
     }
 
+    console.log("Updating category from firestore");
     await updateDoc(docRef, update);
 }
 
 //delete category by docId
 export async function deleteCategory(docId) {
-    const uid = currentUser?.uid;
+    const uid = currentUser?.uid; //?. indicates currentUser can be undefined so I can just kick them out instead of crashing
 
     const catRef = doc(db, COLLECTION_CATEGORY, docId);
     const snapshot = await getDoc(catRef); 
@@ -114,8 +116,12 @@ export async function deleteCategory(docId) {
 
     //to delete a category, all events with that category need to be assigned back to default category first
     //alternatively we could delete all events under the category being deleted !!
-    const categories = await getCategoryList();
+    const categories = await getCategoryList(uid);
     const defaultCategory = categories.find(cat => cat.isDefault);
+
+    if (!defaultCategory) { // shouldn't happen, default category is auto-generated
+        throw new Error("No default category found for user", uid);
+    }
 
     const eventQ = query(
         collection(db, COLLECTION_EVENTS),
@@ -123,7 +129,7 @@ export async function deleteCategory(docId) {
         where('category', '==', docId)
     );
     const eventSnap = await getDocs(eventQ);
-    const batch = writeBatch(db); //batch operation groups the updates/delets into one atomic request
+    const batch = writeBatch(db); //batch operation groups the updates/deletes into one atomic request
 
     eventSnap.forEach(docSnap => {
         const eventRef = doc(db, COLLECTION_EVENTS, docSnap.id);
@@ -133,6 +139,7 @@ export async function deleteCategory(docId) {
     });
 
     batch.delete(catRef); //finally delete the category
+    console.log('Commiting batch for delete category');
     await batch.commit(); //apply all changes in a single transaction
 }
 
