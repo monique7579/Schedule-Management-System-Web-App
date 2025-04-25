@@ -26,6 +26,14 @@ export class HomeModel {
     }
     
     //update/add
+    updateEventList(event, update) {
+        Object.assign(event, update);
+    }
+
+    updateCategoryList(category, update) {
+        Object.assign(category, update);
+    }
+
     prependCategory(category) {
         this.categoryList.unshift(category);
     }

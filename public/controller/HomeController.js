@@ -153,30 +153,7 @@ export class HomeController {
         this.view.render(); //rerender the view
     }
 
-    //listener for delete event
-    async onClickDeleteEvent(e) {
-        console.log('OnClickDeleteEvent called');
-        e.preventDefault();
-        
-        //to do: need way to get docId from however the listener is triggered
-        //i think this depends on what method we use for deleting the event (right click or button)
-        // const docId = e.currentTarget.card.id;
-        // const eventNote = this.model.getEventByDocId(docId); 
     
-        startSpinner();
-        try {
-            await deleteEvent(docId); //delete from firestore
-            this.model.deleteEventByDocId(docId); //delete from model
-            stopSpinner();
-            this.view.render(); //rerender the view
-        } catch(e) {
-            stopSpinner();
-            console.error(e);
-            alert('Error deleting event from Firestore');
-            return;
-        }
-        
-    }
 
     //to do: listener for left or right clicking event (if that is how we will access options)
 
@@ -191,9 +168,67 @@ export class HomeController {
         }
 
         const form = document.forms.formEditEvent;
-                
+        form.title.value = event.title;
+        form.description.value = event.description;
+        // category
+        //start
+        //find
+        //reminder boo
+        //reminder time
+
+        form.onsubmit = function (e) {
+            e.preventDefault();
+            this.onSubmitEventEditForm(e, event);
+        }.bind(this);
+
+        const modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('modal-edit'));
+        modal.show();
     }
 
+    //on submit edit form
+    async onSubmitEventEditForm(e, event) {
+        const form = document.forms.formEditEvent;
+
+        // const uid = currentUser.uid;
+        const title = form.title.value;
+        const description = form.description.value;
+        const category = form.category.options[form.category.selectedIndex].textContent; //text content to show the actual title of category not id
+        const start = form.start.value;
+        const finish = form.finish.value;
+        const reminderBool = form.reminderBool.checked;
+        const reminderTime = form.reminderTime.value;
+
+        //check if anything has changed
+        if (title == event.title &&
+            description == event.description &&
+            category == event.category &&
+            start == event.start &&
+            finish == event.finish &&
+            reminderBool == event.reminderBool &&
+            reminderTime == event.reminderTime
+        ) {
+            console.log('no change');
+            const b = document.getElementById('modalEditEvent-closeBtn');
+            b.click();
+            return;
+        }
+
+        const update = { title, description, category, start, finish, reminderBool, reminderTime};
+        startSpinner();
+        try {
+            await updateEvent(event.docId, update);
+            this.model.updateEventList(event, update);
+            this.model.orderEventListByStartTime();
+            stopSpinner();
+        } catch (e) {
+            stopSpinner();
+            console.error(e);
+            alert('Error updating event');
+            return;
+        }
+    }
+
+    //listener for delete event
     async onRightClickEventCard(e) {
         console.log('onRightClickEventCard called');
         e.preventDefault();
@@ -202,6 +237,22 @@ export class HomeController {
         const event = this.model.getEventByDocId(docId);
         if (!event) {
             console.error('onRightClickEventCard: event not found', docId);
+            return;
+        }
+        //confirm delete 
+        if (!confirm('Delete this event')) {
+            return; //cancel delete
+        }
+        startSpinner();
+        try {
+            await deleteEvent(event.docId);
+            this.model.deleteEventByDocId(event.docId);
+            stopSpinner();
+            this.view.render();
+        } catch (e) {
+            stopSpinner();
+            console.error(e);
+            alert('Error deleting event note');
             return;
         }
     }
