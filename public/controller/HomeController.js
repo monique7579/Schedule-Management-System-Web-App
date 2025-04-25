@@ -179,11 +179,11 @@ export class HomeController {
         const form = document.forms.formEditEvent;
         form.title.value = event.title;
         form.description.value = event.description;
-        // category
-        //start
-        //find
-        //reminder boo
-        //reminder time
+        form.category.value = event.category;
+        form.start.value = event.start;
+        form.finish.value = event.finish;
+        form.reminderBool.value = event.reminderBool;
+        form.reminderTime.value = event.reminderTime;
 
         form.onsubmit = function (e) {
             e.preventDefault();
@@ -213,6 +213,7 @@ export class HomeController {
 
     //on submit edit form
     async onSubmitEventEditForm(e, event) {
+        e.preventDefault(); //needed?
         const form = document.forms.formEditEvent;
 
         // const uid = currentUser.uid;
@@ -253,6 +254,8 @@ export class HomeController {
             await updateEvent(event.docId, update);
             this.model.updateEventList(event, update);
             this.model.orderEventListByStartTime();
+            const b = document.getElementById('modalEditEvent-closeBtn');
+            b.click();
             stopSpinner();
         } catch (e) {
             stopSpinner();
@@ -260,6 +263,7 @@ export class HomeController {
             alert('Error updating event');
             return;
         }
+        this.view.render(); //render view to show the update
     }
 
     async onSubmitEditCategoryForm(e, category) {
