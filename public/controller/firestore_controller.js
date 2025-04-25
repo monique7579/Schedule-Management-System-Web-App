@@ -3,13 +3,13 @@ import {
     collection,
     addDoc,
     query,
-    orderBy,
     getDocs,
     getDoc,
     where,
     updateDoc,
     doc,
-    deleteDoc
+    deleteDoc,
+    writeBatch,
 } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-firestore.js"
 import { Event } from '../model/Event.js';
 import { Category } from '../model/Category.js';
@@ -123,18 +123,21 @@ export async function deleteCategory(docId) {
         throw new Error("No default category found for user", uid);
     }
 
+    console.log('Searching for events with category:', category.title);
     const eventQ = query(
         collection(db, COLLECTION_EVENTS),
         where('uid', '==', uid),
-        where('category', '==', docId)
+        where('category', '==', category.title)
     );
     const eventSnap = await getDocs(eventQ);
+    console.log('Matched events count:', eventSnap.size);
     const batch = writeBatch(db); //batch operation groups the updates/deletes into one atomic request
 
     eventSnap.forEach(docSnap => {
         const eventRef = doc(db, COLLECTION_EVENTS, docSnap.id);
+        console.log("Default category title:", defaultCategory.title);
         batch.update(eventRef, { //update each event with the default category
-            category: defaultCategory.docId 
+            category: defaultCategory.title
         });
     });
 
@@ -160,7 +163,17 @@ export async function getCategoryList(uid) {
     });
 
     //if the user has no categories, create a default category
-    if (categoryList.length === 0) {
+    //pretty sure this can be deleted but im saving just in case
+    // if (categoryList.length === 0) {
+    //     const defaultCategory = new Category(
+    //         { title:"my calendar", uid, isDefault: true }); //'my calendar' is default for every user
+    //     const docId = await addCategory(defaultCategory.toFirestore());
+    //     defaultCategory.set_docId(docId);
+    //     categoryList.push(defaultCategory);
+    // }
+
+    //check for the existance of a default category
+    if(!categoryList.some(cat => cat.isDefault)) {
         const defaultCategory = new Category(
             { title:"my calendar", uid, isDefault: true }); //'my calendar' is default for every user
         const docId = await addCategory(defaultCategory.toFirestore());
@@ -189,7 +202,7 @@ export async function getEventByCategory(category) {
         results.push(event);
     });
 
-    return results;
+    return results; 
 }
 
 //firestore doesn't support query predicate "contains"
