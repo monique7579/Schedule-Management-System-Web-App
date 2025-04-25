@@ -8,7 +8,7 @@ export class HomeModel {
     }
 
     //setters
-    setCategoryList (categoryList) {
+    setCategoryList(categoryList) {
         this.categoryList = categoryList;
     }
 
@@ -24,7 +24,7 @@ export class HomeModel {
     getEventByDocId(docId) {
         return this.eventList.find(event => event.docId === docId);
     }
-    
+
     //update/add
     updateEventList(event, update) {
         Object.assign(event, update);
@@ -66,11 +66,35 @@ export class HomeModel {
     //order
     //by alphabet for events 
     orderCategoryListAlphabetically() {
-        this.categoryList.sort((a,b) => a.title.localeCompare(b.title));
+        this.categoryList.sort((a, b) => a.title.localeCompare(b.title));
     }
 
     //by timestamp for tasks
     orderEventListByStartTime() {
-        this.eventList.sort((a,b) => b.start - a.start);
-    } 
+        this.eventList.sort((a, b) => b.start - a.start);
+    }
+
+    //find if given date has event occurring during it 
+    //if start day(month and year) equal
+    //if fin day equal
+    //if start is less than and fin is greater than
+    hasEvent(date) {
+        const targetTime = date.setHours(0, 0, 0, 0); // normalize target to start of day
+
+        for (const event of this.eventList) {
+            const startDate = new Date(event.start);
+            const finishDate = new Date(event.finish);
+
+            const startTime = startDate.setHours(0, 0, 0, 0); // start of day
+            const finishTime = finishDate.setHours(23, 59, 59, 999); // end of day
+
+            if (
+                targetTime >= startTime &&
+                targetTime <= finishTime
+            ) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

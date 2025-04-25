@@ -121,15 +121,24 @@ export class HomeView extends AbstractView {
         const eventColumn = document.createElement('div'); //create div to hold all elements of the column
         eventColumn.classList.add('right'); //class for css styling purposes
         const eventHeader = document.createElement('div'); //create div for heading of column
-        eventHeader.classList.add('d-flex', 'align-items-center',); //style for proper layout
+        // eventHeader.classList.add('d-flex', 'align-items-center',); //style for proper layout
         const title = document.createElement('h4'); //title of header
         title.innerHTML = "Upcoming";
-        title.classList.add('clay-txt'); //style
+        title.classList.add('text-clay'); //style
         eventHeader.appendChild(title); //add title to header div
-        const searchButton = document.createElement('button'); //create search button
-        searchButton.classList.add('btn-clay', 'btn', 'm-2'); //style search button
-        searchButton.innerHTML = '<i class="bi bi-search"></i>'; //search icon on button
-        eventHeader.appendChild(searchButton); //add search button to header
+
+        const searchBar = document.createElement('div');
+        searchBar.innerHTML = `
+                <form class="d-flex gap-2 pb-2" name="formCreateItem">
+                    <input id="item-name" name="name" class="form-control form-control-sm text-clay" type="text" placeholder="" required minlength="2">
+                    <button id="create-btn" type="submit" class="btn btn-sm btn-clay"><i class="bi bi-search"></i></button>
+                </form>
+            `;
+        // const searchButton = document.createElement('button'); //create search button
+        // searchButton.classList.add('btn-clay', 'btn', 'm-2'); //style search button
+        // searchButton.innerHTML = '<i class="bi bi-search"></i>'; //search icon on button
+        // eventHeader.appendChild(searchButton); //add search button to header
+        eventHeader.appendChild(searchBar); //add search button to header
         eventColumn.appendChild(eventHeader); //add header to event column div
 
         //this is the button to add an event
@@ -374,25 +383,47 @@ export class HomeView extends AbstractView {
 
         // Add the actual days
         for (let i = firstDay; i < 7; i++) { //this is for first week (after blank days)
-            currentRow.push(`<div class="col-1 calendar-day">${dayCounter}</div>`);
+            //if day has an event on it, currentMonth and currentYear are variables for date, day counter would be day
+            const date = new Date(currentYear,currentMonth,dayCounter);
+            if (this.controller.model.hasEvent(date)) {
+                currentRow.push(`<div class="col-1 calendar-day calendar-day-event">${dayCounter}</div>`);
+                // console.log('there is an event this date', date);
+            } else {
+                currentRow.push(`<div class="col-1 calendar-day">${dayCounter}</div>`);
+                // console.log('there are no events');
+            }
+            // dayCounter++;
+            // currentRow.push(`<div class="col-1 calendar-day">${dayCounter}</div>`);
             dayCounter++;
         }
         rows.push(currentRow);
         currentRow = [];
 
         // add rest of days
+
         const today = new Date();
         while (dayCounter <= daysInMonth) {
             for (let i = 0; i < 7; i++) {
                 if (dayCounter > daysInMonth) {
                     currentRow.push('<div class="col-1 calendar-day-prev"></div>');
                 } else {
+                    const date = new Date(currentYear, currentMonth, dayCounter);
                     const isToday =
                         dayCounter === today.getDate() &&
                         currentMonth === today.getMonth() &&
                         currentYear === today.getFullYear();
                     const dayClass = isToday ? 'calendar-day today' : 'calendar-day';
-                    currentRow.push(`<div class="col-1 ${dayClass}">${dayCounter}</div>`);
+                    let eventClass;
+                    if (this.controller.model.hasEvent(date)) {
+                        eventClass = 'calendar-day-event';
+                        // console.log('there is an event this date', date);
+                    } else {
+                        eventClass = '';
+                        // console.log('there are no events');
+                    }
+
+                    // const eventClass = this.controller.model.hasEvent(date) ? 'calendar-day-event' : '';
+                    currentRow.push(`<div class="col-1 ${dayClass} ${eventClass}">${dayCounter}</div>`);
                     dayCounter++;
                 }
             }
@@ -432,13 +463,18 @@ export class HomeView extends AbstractView {
             card.oncontextmenu = this.controller.onRightClickEventCard; //right click
         });
 
-        document.querySelectorAll('.category-checkbox').forEach(checkbox => {
-            checkbox.onclick = this.controller.onClickCategoryCheck; //left click
-        });
+        // document.querySelectorAll('.category-checkbox').forEach(checkbox => {
+        //     checkbox.onclick = this.controller.onClickCategoryCheck; //left click
+        // });
 
         document.querySelectorAll('.category-checkbox-div').forEach(checkbox => {
             checkbox.oncontextmenu = this.controller.onRightClickCategoryCheck; //right click
         });
+        const editCategoryBtn = document.getElementById('btn-editCategory');
+        editCategoryBtn.onclick = this.controller.onClickEditButton;
+        const deleteCategoryBtn = document.getElementById('btn-deleteCategory');
+        deleteCategoryBtn.onclick = this.controller.onClickDeleteButton;
+
         //to do: attach listener to click on event (i.e. right click brings up edit)
 
         //this makes it so that the reminder drop down in the edit model is only enabled when the checkbox is checked
