@@ -19,7 +19,6 @@ export class HomeController {
         this.onSubmitAddCategory = this.onSubmitAddCategory.bind(this);
         this.onClickPrevMonthButton = this.onClickPrevMonthButton.bind(this);
         this.onClickNextMonthButton = this.onClickNextMonthButton.bind(this);
-        this.onClickDeleteEvent = this.onClickDeleteEvent.bind(this);
         this.onClickEventCard = this.onClickEventCard.bind(this);
         this.onRightClickEventCard = this.onRightClickEventCard.bind(this);
     }
