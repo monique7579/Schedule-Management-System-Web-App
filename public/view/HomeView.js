@@ -105,10 +105,11 @@ export class HomeView extends AbstractView {
                 categoryCheck.className = 'form-check category-checkbox-div text-clay'; //create check box with label == category title
                 categoryCheck.id = `${category.docId}`;
                 categoryCheck.innerHTML = `
-                    <input class="form-check-input category-checkbox btn-clay" type="checkbox" value="" id="${category.docId}-input" checked>
+                    <input class="form-check-input category-checkbox btn-clay" data-category="${category.docID}" type="checkbox" value="" id="${category.docId}-input" ${category.isChecked ? 'checked' : ''}>
                     <label class="form-check-label" for="${category.docId}-input">
                         ${category.title}
                     </label>`
+                    
                 list.appendChild(categoryCheck); //add to list
             }
         }
@@ -290,8 +291,11 @@ export class HomeView extends AbstractView {
         } else {
             for (const event of this.controller.model.eventList) { //for every event in list
                 //if fin date is in the future
+                const eventCategory = this.controller.model.getCategoryByTitle(event.category);
+                // const categoryCheckBox = document.querySelector(`[data-category="${event.category}"]`);
+                // console.log('categoryCheckBox', categoryCheckBox);
                 const finishDate = new Date(event.finish);
-                if (finishDate >= today) {
+                if (finishDate >= today && eventCategory.isChecked ) {
                     const card = this.createCard(event); //call function that creates card
                     list.appendChild(card); //add card to list div
                 }
@@ -470,6 +474,11 @@ export class HomeView extends AbstractView {
         document.querySelectorAll('.category-checkbox-div').forEach(checkbox => {
             checkbox.oncontextmenu = this.controller.onRightClickCategoryCheck; //right click
         });
+
+        document.querySelectorAll('.category-checkbox-div').forEach(checkbox => {
+            checkbox.onchange = this.controller.onClickCategoryCheck; //left click
+        });
+        
         const editCategoryBtn = document.getElementById('btn-editCategory');
         editCategoryBtn.onclick = this.controller.onClickEditButton;
         const deleteCategoryBtn = document.getElementById('btn-deleteCategory');

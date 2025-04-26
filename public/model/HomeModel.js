@@ -21,6 +21,10 @@ export class HomeModel {
         return this.categoryList.find(category => category.docId === docId);
     }
 
+    getCategoryByTitle(title) {
+        return this.categoryList.find(category => category.title === title);
+    }
+
     getEventByDocId(docId) {
         return this.eventList.find(event => event.docId === docId);
     }
