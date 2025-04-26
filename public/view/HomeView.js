@@ -105,10 +105,11 @@ export class HomeView extends AbstractView {
                 categoryCheck.className = 'form-check category-checkbox-div text-clay'; //create check box with label == category title
                 categoryCheck.id = `${category.docId}`;
                 categoryCheck.innerHTML = `
-                    <input class="form-check-input category-checkbox btn-clay" type="checkbox" value="" id="${category.docId}-input" checked>
+                    <input class="form-check-input category-checkbox btn-clay" data-category="${category.docID}" type="checkbox" value="" id="${category.docId}-input" ${category.isChecked ? 'checked' : ''}>
                     <label class="form-check-label" for="${category.docId}-input">
                         ${category.title}
                     </label>`
+                    
                 list.appendChild(categoryCheck); //add to list
             }
         }
@@ -127,18 +128,14 @@ export class HomeView extends AbstractView {
         title.classList.add('text-clay'); //style
         eventHeader.appendChild(title); //add title to header div
 
-        const searchBar = document.createElement('div');
-        searchBar.innerHTML = `
-                <form class="d-flex gap-2 pb-2" name="formCreateItem">
-                    <input id="item-name" name="name" class="form-control form-control-sm text-clay" type="text" placeholder="" required minlength="2">
-                    <button id="create-btn" type="submit" class="btn btn-sm btn-clay"><i class="bi bi-search"></i></button>
-                </form>
-            `;
-        // const searchButton = document.createElement('button'); //create search button
-        // searchButton.classList.add('btn-clay', 'btn', 'm-2'); //style search button
-        // searchButton.innerHTML = '<i class="bi bi-search"></i>'; //search icon on button
-        // eventHeader.appendChild(searchButton); //add search button to header
-        eventHeader.appendChild(searchBar); //add search button to header
+        // const searchBar = document.createElement('div');
+        // searchBar.innerHTML = `
+        //         <form class="d-flex gap-2 pb-2" name="formCreateItem">
+        //             <input id="item-name" name="name" class="form-control form-control-sm text-clay" type="text" placeholder="" required minlength="2">
+        //             <button id="create-btn" type="submit" class="btn btn-sm btn-clay"><i class="bi bi-search"></i></button>
+        //         </form>
+        //     `;
+        // eventHeader.appendChild(searchBar); //add search button to header
         eventColumn.appendChild(eventHeader); //add header to event column div
 
         //this is the button to add an event
@@ -290,8 +287,11 @@ export class HomeView extends AbstractView {
         } else {
             for (const event of this.controller.model.eventList) { //for every event in list
                 //if fin date is in the future
+                const eventCategory = this.controller.model.getCategoryByTitle(event.category);
+                // const categoryCheckBox = document.querySelector(`[data-category="${event.category}"]`);
+                // console.log('categoryCheckBox', categoryCheckBox);
                 const finishDate = new Date(event.finish);
-                if (finishDate >= today) {
+                if (finishDate >= today && eventCategory.isChecked ) {
                     const card = this.createCard(event); //call function that creates card
                     list.appendChild(card); //add card to list div
                 }
@@ -470,6 +470,11 @@ export class HomeView extends AbstractView {
         document.querySelectorAll('.category-checkbox-div').forEach(checkbox => {
             checkbox.oncontextmenu = this.controller.onRightClickCategoryCheck; //right click
         });
+
+        document.querySelectorAll('.category-checkbox-div').forEach(checkbox => {
+            checkbox.onchange = this.controller.onClickCategoryCheck; //left click
+        });
+        
         const editCategoryBtn = document.getElementById('btn-editCategory');
         editCategoryBtn.onclick = this.controller.onClickEditButton;
         const deleteCategoryBtn = document.getElementById('btn-deleteCategory');

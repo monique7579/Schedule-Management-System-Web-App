@@ -21,7 +21,7 @@ export class HomeController {
         this.onClickNextMonthButton = this.onClickNextMonthButton.bind(this);
         this.onClickEventCard = this.onClickEventCard.bind(this);
         this.onRightClickEventCard = this.onRightClickEventCard.bind(this);
-        // this.onClickCategoryCheck = this.onClickCategoryCheck.bind(this);
+        this.onClickCategoryCheck = this.onClickCategoryCheck.bind(this);
         this.onRightClickCategoryCheck = this.onRightClickCategoryCheck.bind(this);
         this.onClickEditButton = this.onClickEditButton.bind(this);
         this.onClickDeleteButton = this.onClickDeleteButton.bind(this);
@@ -164,8 +164,6 @@ export class HomeController {
         this.view.render(); //rerender the view
     }
 
-
-
     //to do: listener for left or right clicking event (if that is how we will access options)
 
     async onClickEventCard(e) {
@@ -181,7 +179,7 @@ export class HomeController {
         const form = document.forms.formEditEvent;
         form.title.value = event.title;
         form.description.value = event.description;
-        form.category.value = event.category;
+        this.selectCategoryByText(event.category); //selects the correct category from dropdown based on event category
         form.start.value = event.start;
         form.finish.value = event.finish;
         form.reminderBool.value = event.reminderBool;
@@ -194,6 +192,43 @@ export class HomeController {
 
         const modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('modal-edit'));
         modal.show();
+    }
+
+    async onClickCategoryCheck(e) {
+        console.log('onClickCategoryCheck called');
+        const checkbox = e.currentTarget;
+        const docId = checkbox.id;
+        const category = this.model.getCategoryByDocId(docId);
+
+        if (!category) {
+            console.error('onRightClickCategoryCheck: category not found', docId);
+        }
+        if (category.isChecked) {
+            const update = { isChecked: false };
+            try {
+                await updateCategory(category.docId, update);
+                this.model.updateCategoryList(category, update);
+            } catch (e) {
+                stopSpinner();
+                console.error(e);
+                alert('Error updating category');
+                return;
+            }
+            // category.set_isChecked(false);
+        } else {
+            // category.set_isChecked(true);
+            const update = { isChecked: true};
+            try {
+                await updateCategory(category.docId, update);
+                this.model.updateCategoryList(category, update);
+            } catch (e) {
+                stopSpinner();
+                console.error(e);
+                alert('Error updating category');
+                return;
+            }
+        }
+        this.view.render();
     }
 
     async onClickEditButton(e) { //this is for editing categories
@@ -274,7 +309,17 @@ export class HomeController {
             alert('Error updating event');
             return;
         }
-        this.view.render(); //render view to show the update
+    }
+
+    //helper for edit event drop down
+    selectCategoryByText(text) {
+        const select = document.getElementById('categoryDropdown'); //grabs drop down
+        for (let i = 0; i < select.options.length; i++) { //iterates over all the dropdown options
+            if (select.options[i].textContent.trim() === text.trim()) { //find the one that matches the given category
+                select.selectedIndex = i; //select the correct index
+                break;
+            }
+        }
     }
 
     async onSubmitEditCategoryForm(e, category) {
@@ -282,7 +327,7 @@ export class HomeController {
         const form = document.forms.formEditCategory;
         const title = form.title.value;
 
-        console.log("Category retrieved from the form: ",category);
+        console.log("Category retrieved from the form: ", category);
 
         if (title === category.title) {
             console.log('no change');
@@ -383,7 +428,7 @@ export class HomeController {
             alert('Error deleting category');
             return;
         }
-        
+
     }
     //to do: listener for category filter change?
 
