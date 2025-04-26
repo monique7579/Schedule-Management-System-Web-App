@@ -24,10 +24,10 @@ export class ProfileView extends AbstractView {
         viewWrapper.innerHTML = await response.text();
         const profileContent = document.createElement('div');
         profileContent.innerHTML = `
-            <h1>Profile</h1>
-            <p>Welcome to your profile page.</p>
-            <p>Email: ${currentUser.email}</p>
-            <p>User UID: ${currentUser.uid}</p>
+            <h1 class="text-clay">Profile</h1>
+            <p class="text-clay">Welcome to your profile page.</p>
+            <p class="text-clay">Email: ${currentUser.email}</p>
+            <p class="text-clay">User UID: ${currentUser.uid}</p>
         `;
         viewWrapper.appendChild(profileContent);
         
@@ -38,8 +38,8 @@ export class ProfileView extends AbstractView {
 
     attachEvents() { 
         console.log('ProfileView.attachEvents() called');
-        const backHomeButton = document.getElementById('backHomeButton');
-        backHomeButton.onclick = this.controller.onClickBackHomeButton;
+        // const backHomeButton = document.getElementById('backHomeButton');
+        // backHomeButton.onclick = this.controller.onClickBackHomeButton;
 
         //note: if there are any buttons we put in profile (i.e. change password etc) their listeners will be attached here
     }
