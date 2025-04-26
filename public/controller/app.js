@@ -3,7 +3,7 @@ import { ProfileView } from "../view/ProfileView.js";
 import { HomeController } from "./HomeController.js";
 import { ProfileController } from "./ProfileController.js";
 import { Router } from "./Router.js";
-import {createAccount, loginFirebase, logoutFirebase} from './firebase_auth.js'
+import { createAccount, loginFirebase, logoutFirebase } from './firebase_auth.js'
 import { startSpinner, stopSpinner } from "../view/util.js";
 import { EventSearchView } from "../view/EventSearchView.js"
 import { EventSearchController } from "../controller/EventSearchController.js"

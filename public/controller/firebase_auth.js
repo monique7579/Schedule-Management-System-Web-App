@@ -4,24 +4,48 @@ import {
     signOut,
     onAuthStateChanged,
     createUserWithEmailAndPassword,
+    sendPasswordResetEmail,
+    updateEmail,
+    reauthenticateWithCredential,
+    EmailAuthProvider,
 } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-auth.js"
 
 import { app } from './firebase_core.js'
 import { router } from "./app.js";
-import { glHomeModel } from "./HomeController.js";
 
 const auth = getAuth(app);
 
 export let currentUser = null;
 
 export async function loginFirebase(email, password) {
-
     await signInWithEmailAndPassword(auth, email, password);
-
 }
 
 export async function logoutFirebase() {
     await signOut(auth);
+}
+
+export async function createAccount (email, password) {
+    await createUserWithEmailAndPassword (auth, email, password);
+}
+
+export async function sendPasswordReset(email) {
+    await sendPasswordResetEmail(auth, email);
+}
+
+export async function updateUserEmail(newEmail) {
+    if (!auth.currentUser) {
+        throw new Error('No user currently signed in');
+    }
+    await updateEmail(auth.currentUser, newEmail);
+}
+
+export async function reauthenticateUser(password) {
+    if (!auth.currentUser) {
+        throw new Error('No user currently signed in');
+    }
+    const credential = EmailAuthProvider.credential(auth.currentUser.email, password);
+    await reauthenticateWithCredential(auth.currentUser, credential);
 }
 
 onAuthStateChanged(auth, user => {
@@ -50,7 +74,3 @@ onAuthStateChanged(auth, user => {
         // glHomeModel.reset(); //reset when sign out
     }
 });
-
-export async function createAccount (email, password) {
-    await createUserWithEmailAndPassword (auth, email, password);
-}
