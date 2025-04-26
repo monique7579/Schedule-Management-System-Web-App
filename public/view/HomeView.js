@@ -491,7 +491,6 @@ export class HomeView extends AbstractView {
                 select.disabled = !checkbox.checked;
             });
         }
-
     }
 
     async onLeave() {

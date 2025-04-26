@@ -195,9 +195,10 @@ export class EventSearchView extends AbstractView {
         return card; //return card for renderEventList function
     }
 
-
     attachEvents() {
         console.log('EventSearchView.attachEvents() called');
+        // document.forms.formCreateItem.onsubmit = this.controller.onSubmitSearch;
+
     }
 
     async onLeave() {

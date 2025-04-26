@@ -13,6 +13,7 @@ export class EventSearchController {
 
     constructor() {
         this.model = new EventSearchModel();
+        // this.onSubmitSearch = this.onSubmitSearch.bind(this);
     }
 
     setView(view) {
@@ -49,4 +50,18 @@ export class EventSearchController {
             alert('Error loading tasks');
         }
     }
+
+    // onSubmitSearch(e) {
+    //     console.log('onSubmitSearch called')
+    //     e.preventDefault();
+    //     const keyword = e.target.name.value.toLowerCase().trim();
+    //     const filteredEvents = this.model.eventList.filter(event =>
+    //         event.title.toLowerCase().trim().includes(keyword) ||
+    //         event.description.toLowerCase().trim().includes(keyword)
+    //     );
+    //     console.log("filtered events from search: ",filteredEvents);
+    //     this.model.filteredEventList = filteredEvents;
+    //     this.view.render();
+    // }
+
 }
