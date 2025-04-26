@@ -23,7 +23,7 @@ export class EventSearchView extends AbstractView {
         console.log('EventSearchView.updateView() called');
         const viewWrapper = document.createElement('div'); //create div that will be appended the the "master" view
         viewWrapper.classList.add('d-flex'); //allows the elements to line up horizontally
-        const response = await fetch('/view/templates/home.html', { cache: 'no-store' }); //to use await function must be async
+        const response = await fetch('/view/templates/eventsearch.html', { cache: 'no-store' }); //to use await function must be async
         viewWrapper.innerHTML = await response.text();
 
 
@@ -42,45 +42,11 @@ export class EventSearchView extends AbstractView {
         console.log('HomeView.buildCategoryColumn() called');
         const categoryColumn = document.createElement('div'); //create div element to contain all elements of this column
         categoryColumn.classList.add('left'); //class for css style purposes
-        const addCategory = document.createElement('button'); //create button for creating category, this will link to the modal
-        addCategory.classList.add('btn-clay', 'btn'); //style classes for css
-        addCategory.innerHTML = 'Add Category'; //text on button
-        addCategory.setAttribute('data-bs-toggle', 'modal'); //attributes that connect it to the modal
-        addCategory.setAttribute('data-bs-target', '#modaladdCategory');
 
-        const addCategoryModal = document.createElement('div'); //create div element for modal to go in
-        addCategoryModal.className = 'modal fade'; //classes for bootstrap modal
-        addCategoryModal.id = 'modaladdCategory'; //id
-        addCategoryModal.setAttribute('data-bs-backdrop', 'static'); //attributes for boostrap modal vvvv
-        addCategoryModal.setAttribute('data-bs-keyboard', 'false');
-        addCategoryModal.setAttribute('tabindex', '-1');
-        addCategoryModal.setAttribute('aria-labelledby', 'addCategoryModal');
-        addCategoryModal.setAttribute('aria-hidden', 'true');
-        addCategoryModal.classList.add('modal-clay',); //classes for css styling
-
-        //this is the necessary HTML for the modal and the form that is  within it
-        addCategoryModal.innerHTML = ` 
-        <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h1 class="modal-title fs-5" id="modalAddCategoryLabel">Create Category</h1>
-            <button id="modalAddCategory-closeBtn" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-            <div class="modal-body">
-            <form name="formAddCategory">
-              <div class="mb-3">
-                <label class="form-label">Name</label>
-                <input type="text" class="form-control" name="title" required minlength="3">
-              </div>
-              <button type="submit" class="btn btn-clay">Create</button>
-            </form>
-            </div>
-        </div>
-        </div>
-        `;
-
-        categoryColumn.appendChild(addCategoryModal); //add modal to category div
-        categoryColumn.appendChild(addCategory); //add button to category div
+        const title = document.createElement('h4'); //title of header
+        title.innerHTML = "Categories";
+        title.classList.add('text-clay'); //style
+        categoryColumn.appendChild(title);
 
         const categoryList = this.renderCategoryList(); //call function that renders the category list and returns it
         categoryColumn.appendChild(categoryList); //add category list to category div
@@ -91,7 +57,8 @@ export class EventSearchView extends AbstractView {
     renderCategoryList() { //function called by buildCategoryColumn
         const list = document.createElement('div'); //make div to hold the full list
         list.id = 'category-list'; //id
-        list.className = 'mt-3'; //add classes/styling
+        list.className = 'mt-3 overflow-auto'; //bootstrap styling
+        list.style = "max-height: 500px;"; //caps off how tall the list can appear no matter how many events (becomes scrollable)
 
         if (this.controller.model.categoryList.length === 0) { //if there are no categories (this should never happen)
             const noData = document.createElement('div');
@@ -121,13 +88,13 @@ export class EventSearchView extends AbstractView {
         const eventHeader = document.createElement('div'); //create div for heading of column
         // eventHeader.classList.add('d-flex', 'align-items-center',); //style for proper layout
         const title = document.createElement('h4'); //title of header
-        title.innerHTML = "Your Events";
+        title.innerHTML = "Events";
         title.classList.add('text-clay'); //style
         eventHeader.appendChild(title); //add title to header div
 
         const searchBar = document.createElement('div');
         searchBar.innerHTML = `
-                <form class="d-flex gap-2 pb-2" name="formCreateItem">
+                <form class="d-flex gap-2 pb-2" name="formSearchEvent">
                     <input id="item-name" name="name" class="form-control form-control-sm text-clay" type="text" placeholder="" required minlength="2">
                     <button id="create-btn" type="submit" class="btn btn-sm btn-clay"><i class="bi bi-search"></i></button>
                 </form>
@@ -164,11 +131,11 @@ export class EventSearchView extends AbstractView {
         } else {
             for (const event of this.controller.model.eventList) { //for every event in list
                 //if fin date is in the future
-                // const eventCategory = this.controller.model.getCategoryByTitle(event.category);
-                // const categoryCheckBox = document.querySelector(`[data-category="${event.category}"]`);
+                const eventCategory = this.controller.model.getCategoryByTitle(event.category);
+                const categoryCheckBox = document.querySelector(`[data-category="${event.category}"]`);
                 // console.log('categoryCheckBox', categoryCheckBox);
                 const finishDate = new Date(event.finish);
-                if (finishDate >= today) {
+                if (finishDate >= today && eventCategory.isChecked) {
                     const card = this.createCard(event); //call function that creates card
                     list.appendChild(card); //add card to list div
                 }
@@ -195,9 +162,68 @@ export class EventSearchView extends AbstractView {
         return card; //return card for renderEventList function
     }
 
+    async populateCategoryDropdownEdit() {
+        // const select = document.getElementById('categoryDropdown'); 
+        const select = document.getElementById('categoryDropdown-edit'); //grab the corresponding drop down from the modal
+        if (!select) { //if not found (should never happen)
+            console.log('didnt find categorydropdown');
+            return;
+        }
+        try {
+            for (const category of this.controller.model.categoryList) { //for every category from the modal
+                const option = document.createElement('option'); //create option
+                option.value = category.docId; //the value is docId for id purposes
+                option.textContent = category.title; //shows as the category title
+                select.appendChild(option); //add option to drop down
+            }
+        } catch (e) { //handle any error that occurs
+            console.error("Error loading categories", e);
+        }
 
-    attachEvents() {
+        //try 
+
+    }
+
+
+    async attachEvents() {
         console.log('EventSearchView.attachEvents() called');
+        await this.populateCategoryDropdownEdit(); //could be placed elsewhere but this worked for now
+
+        document.forms.formSearchEvent.onsubmit = this.controller.onClickSearchButton;
+
+        document.querySelectorAll('.card-event').forEach(card => {
+            card.onclick = this.controller.onClickEventCard; //left click
+            card.oncontextmenu = this.controller.onRightClickEventCard; //right click
+        });
+
+        // document.querySelectorAll('.category-checkbox').forEach(checkbox => {
+        //     checkbox.onclick = this.controller.onClickCategoryCheck; //left click
+        // });
+
+        document.querySelectorAll('.category-checkbox-div').forEach(checkbox => {
+            checkbox.oncontextmenu = this.controller.onRightClickCategoryCheck; //right click
+        });
+
+        document.querySelectorAll('.category-checkbox-div').forEach(checkbox => {
+            checkbox.onchange = this.controller.onClickCategoryCheck; //left click
+        });
+        
+        const editCategoryBtn = document.getElementById('btn-editCategory');
+        editCategoryBtn.onclick = this.controller.onClickEditButton;
+        const deleteCategoryBtn = document.getElementById('btn-deleteCategory');
+        deleteCategoryBtn.onclick = this.controller.onClickDeleteButton;
+
+        //to do: attach listener to click on event (i.e. right click brings up edit)
+
+        //this makes it so that the reminder drop down in the edit model is only enabled when the checkbox is checked
+        const checkbox = document.getElementById('checkDefaultEdit');
+        const select = document.getElementById('dropdown-remindertime');
+
+        if (checkbox && select) {
+            checkbox.addEventListener('change', () => {
+                select.disabled = !checkbox.checked;
+            });
+        }
     }
 
     async onLeave() {
