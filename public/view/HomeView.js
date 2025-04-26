@@ -128,18 +128,14 @@ export class HomeView extends AbstractView {
         title.classList.add('text-clay'); //style
         eventHeader.appendChild(title); //add title to header div
 
-        const searchBar = document.createElement('div');
-        searchBar.innerHTML = `
-                <form class="d-flex gap-2 pb-2" name="formCreateItem">
-                    <input id="item-name" name="name" class="form-control form-control-sm text-clay" type="text" placeholder="" required minlength="2">
-                    <button id="create-btn" type="submit" class="btn btn-sm btn-clay"><i class="bi bi-search"></i></button>
-                </form>
-            `;
-        // const searchButton = document.createElement('button'); //create search button
-        // searchButton.classList.add('btn-clay', 'btn', 'm-2'); //style search button
-        // searchButton.innerHTML = '<i class="bi bi-search"></i>'; //search icon on button
-        // eventHeader.appendChild(searchButton); //add search button to header
-        eventHeader.appendChild(searchBar); //add search button to header
+        // const searchBar = document.createElement('div');
+        // searchBar.innerHTML = `
+        //         <form class="d-flex gap-2 pb-2" name="formCreateItem">
+        //             <input id="item-name" name="name" class="form-control form-control-sm text-clay" type="text" placeholder="" required minlength="2">
+        //             <button id="create-btn" type="submit" class="btn btn-sm btn-clay"><i class="bi bi-search"></i></button>
+        //         </form>
+        //     `;
+        // eventHeader.appendChild(searchBar); //add search button to header
         eventColumn.appendChild(eventHeader); //add header to event column div
 
         //this is the button to add an event

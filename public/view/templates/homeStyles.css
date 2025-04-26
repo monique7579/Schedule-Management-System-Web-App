@@ -58,6 +58,12 @@ input.text-clay {
     border-left: 4px double var(--light-color);
 }
 
+.right-events {
+    width: 80%;
+    padding: 20px;
+    border-right: 4px double var(--light-color);
+}
+
 .calendar-day {
     width: 90px; /* or 14.28%*/
     position: relative;
@@ -93,11 +99,12 @@ input.text-clay {
 }
 
 .today {
-    background-color: var(--primary-color);
+    /* background-color: var(--primary-color); */
+    background-color: color-mix(in srgb, var(--light-color), transparent 70%);
     /* border: 2px solid #ff69b4; */
     font-weight: bold;
     font-size: 1.7rem;
-    color: #fff;
+    /* color: #fff; */
 }
 .calendar-day-prev {
     width: 90px; /* or 14.28%*/
