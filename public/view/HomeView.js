@@ -44,6 +44,12 @@ export class HomeView extends AbstractView {
         console.log('HomeView.buildCategoryColumn() called');
         const categoryColumn = document.createElement('div'); //create div element to contain all elements of this column
         categoryColumn.classList.add('left'); //class for css style purposes
+
+        const title = document.createElement('h4'); //title of header
+        title.innerHTML = "Categories";
+        title.classList.add('text-clay'); //style
+        categoryColumn.appendChild(title);
+
         const addCategory = document.createElement('button'); //create button for creating category, this will link to the modal
         addCategory.classList.add('btn-clay', 'btn'); //style classes for css
         addCategory.innerHTML = 'Add Category'; //text on button
@@ -93,7 +99,8 @@ export class HomeView extends AbstractView {
     renderCategoryList() { //function called by buildCategoryColumn
         const list = document.createElement('div'); //make div to hold the full list
         list.id = 'category-list'; //id
-        list.className = 'mt-3'; //add classes/styling
+        list.className = 'mt-3 overflow-auto'; //bootstrap styling
+        list.style = "max-height: 500px;"; //caps off how tall the list can appear no matter how many events (becomes scrollable)
 
         if (this.controller.model.categoryList.length === 0) { //if there are no categories (this should never happen)
             const noData = document.createElement('div');
