@@ -165,7 +165,7 @@ export class EventSearchView extends AbstractView {
        `;
         return card; //return card for renderEventList function
     }
-
+        
     async populateCategoryDropdownEdit() {
         // const select = document.getElementById('categoryDropdown'); 
         const select = document.getElementById('categoryDropdown-edit'); //grab the corresponding drop down from the modal
@@ -192,6 +192,7 @@ export class EventSearchView extends AbstractView {
     async attachEvents() {
         console.log('EventSearchView.attachEvents() called');
         await this.populateCategoryDropdownEdit(); //could be placed elsewhere but this worked for now
+      // document.forms.formCreateItem.onsubmit = this.controller.onSubmitSearch;
 
         document.forms.formSearchEvent.onsubmit = this.controller.onClickSearchButton;
 

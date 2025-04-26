@@ -164,8 +164,6 @@ export class HomeController {
         this.view.render(); //rerender the view
     }
 
-    //to do: listener for left or right clicking event (if that is how we will access options)
-
     async onClickEventCard(e) {
         console.log('onClickEventCard called');
         const card = e.currentTarget;
@@ -399,8 +397,6 @@ export class HomeController {
         form.dataset.docId = docId;
         const modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('modal-editordelete-category'));
         modal.show();
-
-
     }
 
     async onClickDeleteButton(e) {
@@ -428,16 +424,10 @@ export class HomeController {
             alert('Error deleting category');
             return;
         }
-
     }
-    //to do: listener for category filter change?
-
 
     //instruction:: DELETE BEFORE SUBMISSION
     //to do: define listeners for all interact-able components in home view, they will call a corresponding
     //function from firestore_controller.js in a try catch block
     //note: these are the functions that are attached to buttons in HomeView.js attachEvents()
-
-
-
 }

@@ -13,6 +13,7 @@ export class EventSearchController {
 
     constructor() {
         this.model = new EventSearchModel();
+        // this.onSubmitSearch = this.onSubmitSearch.bind(this);
         this.onClickEventCard = this.onClickEventCard.bind(this);
         this.onRightClickEventCard = this.onRightClickEventCard.bind(this);
         this.onClickCategoryCheck = this.onClickCategoryCheck.bind(this);
@@ -58,8 +59,21 @@ export class EventSearchController {
         }
     }
 
-    //edit events
 
+    // onSubmitSearch(e) {
+    //     console.log('onSubmitSearch called')
+    //     e.preventDefault();
+    //     const keyword = e.target.name.value.toLowerCase().trim();
+    //     const filteredEvents = this.model.eventList.filter(event =>
+    //         event.title.toLowerCase().trim().includes(keyword) ||
+    //         event.description.toLowerCase().trim().includes(keyword)
+    //     );
+    //     console.log("filtered events from search: ",filteredEvents);
+    //     this.model.filteredEventList = filteredEvents;
+    //     this.view.render();
+    // }
+
+    //edit events
     async onClickEventCard(e) {
         console.log('onClickEventCard called');
         const card = e.currentTarget;
@@ -297,8 +311,6 @@ export class EventSearchController {
         form.dataset.docId = docId;
         const modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('modal-editordelete-category'));
         modal.show();
-
-
     }
 
     async onClickDeleteButton(e) {
@@ -330,7 +342,6 @@ export class EventSearchController {
     }
 
     //searching
-
     async onClickSearchButton(e) {
         console.log('onClickSearchButton called');
         e.preventDefault();
@@ -339,7 +350,5 @@ export class EventSearchController {
     async onClickClearButton(e) {
         console.log('onClickClearButton called');
     }
-
-
 }
 

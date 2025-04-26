@@ -92,7 +92,7 @@ export async function updateCategory(docId, update) {
     const snapshot = await getDoc(docRef); //fetch the category doc to check default
     const category = snapshot.data();
 
-    if (category.isDefault) { //preserve default category
+    if (category.isDefault && 'title' in update) { //preserve default category
         throw new Error("Default category cannot be updated");
     }
 
