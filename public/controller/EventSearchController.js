@@ -20,6 +20,7 @@ export class EventSearchController {
         this.onClickEditButton = this.onClickEditButton.bind(this);
         this.onClickDeleteButton = this.onClickDeleteButton.bind(this);
         this.onClickSearchButton = this.onClickSearchButton.bind(this);
+        this.onClickClearButton = this.onClickClearButton.bind(this);
     }
 
     setView(view) {
@@ -333,6 +334,10 @@ export class EventSearchController {
     async onClickSearchButton(e) {
         console.log('onClickSearchButton called');
         e.preventDefault();
+    }
+
+    async onClickClearButton(e) {
+        console.log('onClickClearButton called');
     }
 
 

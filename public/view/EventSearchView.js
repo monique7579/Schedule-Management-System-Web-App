@@ -92,23 +92,27 @@ export class EventSearchView extends AbstractView {
         title.classList.add('text-clay'); //style
         eventHeader.appendChild(title); //add title to header div
 
+        const searchDiv = document.createElement('div');
+        searchDiv.classList.add('d-flex');
+
+        const clearButton = document.createElement('button'); //create button
+        clearButton.classList.add('btn-clay', 'btn', 'me-2'); //style
+        clearButton.innerHTML = 'Clear Search'; //text on btn
+        clearButton.id = 'clear-btn';
+
         const searchBar = document.createElement('div');
+        searchBar.name = 'formSearchEvent';
+        searchBar.classList.add('d-flex', 'gap-2', 'flex-grow-1');
         searchBar.innerHTML = `
-                <form class="d-flex gap-2 pb-2" name="formSearchEvent">
-                    <input id="item-name" name="name" class="form-control form-control-sm text-clay" type="text" placeholder="" required minlength="2">
-                    <button id="create-btn" type="submit" class="btn btn-sm btn-clay"><i class="bi bi-search"></i></button>
+                <form class="d-flex gap-2 flex-grow-1" name="formSearchEvent">
+                    <input id="item-name" name="name" class="form-control  text-clay" type="text" placeholder="" required minlength="2">
+                    <button id="create-btn" type="submit" class="btn  btn-clay"><i class="bi bi-search"></i></button>
                 </form>
             `;
-        eventHeader.appendChild(searchBar); //add search button to header
+        searchDiv.appendChild(clearButton);
+        searchDiv.appendChild(searchBar); //add search button to header
+        eventHeader.appendChild(searchDiv);
         eventColumn.appendChild(eventHeader); //add header to event column div
-
-        //this is the button to add an event
-        const addEvent = document.createElement('button'); //create button
-        addEvent.classList.add('btn-clay', 'btn'); //style
-        addEvent.innerHTML = 'Add Event'; //text on btn
-        addEvent.setAttribute('data-bs-toggle', 'modal'); //attributes to attach modal v
-        addEvent.setAttribute('data-bs-target', '#modalAddEvent');
-
 
         const events = this.renderEventList(); //call function that renders and returns event list
         eventColumn.appendChild(events); //add event lis tthe column div
@@ -190,6 +194,9 @@ export class EventSearchView extends AbstractView {
         await this.populateCategoryDropdownEdit(); //could be placed elsewhere but this worked for now
 
         document.forms.formSearchEvent.onsubmit = this.controller.onClickSearchButton;
+
+        const clearBtn = document.getElementById('clear-btn');
+        clearBtn.onclick = this.controller.onClickClearButton;
 
         document.querySelectorAll('.card-event').forEach(card => {
             card.onclick = this.controller.onClickEventCard; //left click
