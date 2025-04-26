@@ -79,4 +79,25 @@ export class EventSearchModel {
     orderEventListByStartTime() {
         this.eventList.sort((a, b) => b.start - a.start);
     }
+
+    //search/filter
+    //fullEventList should be fetched from firestore before calling function, want most up to date version
+    filterEvents(searchInput, fullEventList) {
+        console.log('filterEvents called from model');
+
+        //if search is empty, we won't filter, just reset to full list
+        if (!searchInput || searchInput.trim() === '') {
+            this.eventList = [...fullEventList];
+            return;
+        }
+
+        const search = searchInput.toLowerCase().trim(); //trim whitespace and toLower for case-insensitive comparison
+        const filteredEvents = fullEventList.filter(event =>
+            event.title.toLowerCase().trim().includes(search) ||
+            event.description.toLowerCase().trim().includes(search)
+        );
+        console.log('filtered events from model');
+
+        this.setEventList(filteredEvents);
+    }
 }

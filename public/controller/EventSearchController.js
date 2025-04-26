@@ -1,9 +1,6 @@
 import { EventSearchModel } from "../model/EventSearchModel.js";
-// import { HomeModel } from "../model/HomeModel.js";
-import { Event } from '../model/Event.js';
-import { Category } from '../model/Category.js';
 import { currentUser } from './firebase_auth.js';
-import { addCategory, addEvent, getCategoryList, getEventList, deleteEvent, deleteCategory, updateEvent, updateCategory } from './firestore_controller.js';
+import { getCategoryList, getEventList, deleteEvent, deleteCategory, updateEvent, updateCategory } from './firestore_controller.js';
 import { startSpinner, stopSpinner } from "../view/util.js";
 
 export class EventSearchController {
@@ -58,20 +55,6 @@ export class EventSearchController {
             alert('Error loading tasks');
         }
     }
-
-
-    // onSubmitSearch(e) {
-    //     console.log('onSubmitSearch called')
-    //     e.preventDefault();
-    //     const keyword = e.target.name.value.toLowerCase().trim();
-    //     const filteredEvents = this.model.eventList.filter(event =>
-    //         event.title.toLowerCase().trim().includes(keyword) ||
-    //         event.description.toLowerCase().trim().includes(keyword)
-    //     );
-    //     console.log("filtered events from search: ",filteredEvents);
-    //     this.model.filteredEventList = filteredEvents;
-    //     this.view.render();
-    // }
 
     //edit events
     async onClickEventCard(e) {
@@ -168,7 +151,6 @@ export class EventSearchController {
     }
 
     //edit categories
-
     async onClickCategoryCheck(e) {
         console.log('onClickCategoryCheck called');
         const checkbox = e.currentTarget;
@@ -263,7 +245,6 @@ export class EventSearchController {
     }
 
     //delete events
-
     async onRightClickEventCard(e) {
         console.log('onRightClickEventCard called');
         e.preventDefault();
@@ -293,7 +274,6 @@ export class EventSearchController {
     }
 
     //delete categories
-
     async onRightClickCategoryCheck(e) {
         console.log('onRightClickCategoryCheck called');
         e.preventDefault();
@@ -338,17 +318,47 @@ export class EventSearchController {
             alert('Error deleting category');
             return;
         }
-
     }
 
     //searching
     async onClickSearchButton(e) {
         console.log('onClickSearchButton called');
         e.preventDefault();
+        startSpinner();
+        try {
+            const eventList = await getEventList(currentUser.uid);
+            this.model.setEventList(eventList);
+            this.model.orderEventListByStartTime();
+            stopSpinner();
+
+            this.model.filterEvents(e.target.name.value, eventList);
+            console.log('success filtering events', this.model.eventList);
+            this.view.render();
+        } catch(e) {
+            stopSpinner();
+            console.error(e);
+            alert('OnClickSearchButton: error fetching events/updating model');
+            return;
+        }
     }
 
     async onClickClearButton(e) {
         console.log('onClickClearButton called');
+        e.preventDefault();
+        startSpinner();
+        try {
+            const eventList = await getEventList(currentUser.uid);
+            this.model.setEventList(eventList);
+            this.model.orderEventListByStartTime();
+            stopSpinner();
+
+            this.model.filterEvents('', eventList); //pass empty input
+            this.view.render();
+        } catch(e) {
+            stopSpinner();
+            console.error(e);
+            alert('onClickClearButton: error fetching events/updating model');
+            return;
+        }
     }
 }
-
