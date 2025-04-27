@@ -40,7 +40,72 @@ export class ProfileView extends AbstractView {
         profileContent.appendChild(changeEmailButton); //add to profile content
         viewWrapper.appendChild(profileContent); //add profile content to view
         
+        const passwordAuthModal = document.createElement('div');
+        passwordAuthModal.innerHTML = `
+            <div id="passwordAuthModal" class="modal fade" tabindex="-1">
+                <div class ="modal-dialog">
+                    <form id="passwordForm" class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Reauthenticate</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            <input type="password" class="form-control" name="password" placeholder="Enter your password" required>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-clay">Confirm</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        `;  
+        viewWrapper.appendChild(passwordAuthModal);
+
+        const messageModal = document.createElement('div');
+        messageModal.innerHTML = `
+            <div id="messageModal" class="modal fade" tabindex="-1">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            <p id="messageModalText" class="text-clay"></p>
+                        </div>
+                        <div class="modal-footer">
+                            <button id="messageModalOkButton" type="button" class="btn btn-clay" data-bs-dismiss="modal">OK</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+        viewWrapper.appendChild(messageModal);
+
+        const promptModal = document.createElement('div');
+        promptModal.innerHTML = `
+            <div id="promptModal" class="modal fade" tabindex="-1">
+                <div class ="modal-dialog">
+                    <div class="modal-content">
+                        <form id="promptForm">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="promptModalTitle">Input</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body">
+                                <input type="text" class="form-control" id="promptInput" required>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="submit" class="btn btn-clay">Submit</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        `;  
+        viewWrapper.appendChild(promptModal);
+
         return viewWrapper;
+        //note: anything that we want to render in profile i.e. usrname, email etc will be put hear
     }
 
     attachEvents() { //attach listeners
