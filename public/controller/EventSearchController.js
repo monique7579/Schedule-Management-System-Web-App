@@ -305,8 +305,13 @@ export class EventSearchController {
         try {
             await deleteCategory(category.docId); //call function that deletes from database
             this.model.deleteCategoryByDocId(category.docId); //delete from model
+            //testing
+            const eventList = await getEventList(currentUser.uid); //call firestore side to grab events from database
+            this.model.setEventList(eventList); //update model to match
+            this.model.orderEventListByStartTime(); //order events in model by time
+            //testing
             stopSpinner();
-            this.view.render(); //render view to match
+            this.view.render();
         } catch (e) { //handle error
             stopSpinner();
             console.error(e);

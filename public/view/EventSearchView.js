@@ -129,13 +129,12 @@ export class EventSearchView extends AbstractView {
 
         if (this.controller.model.eventList.length === 0) { //if no events upcoming 
             const noData = document.createElement('div');
-            noData.innerHTML = '<h5 class="text-clay">No upcoming events</h5>'; //rendering message
+            noData.innerHTML = '<h5 class="text-clay">No events</h5>'; //rendering message
             list.appendChild(noData);
         } else {
             for (const event of this.controller.model.eventList) { //for every event in list
                 const eventCategory = this.controller.model.getCategoryByTitle(event.category);//get corresponding category from model
-                const finishDate = new Date(event.finish); //grab finish and convert to date type
-                if (finishDate >= today && eventCategory.isChecked) { //if the event finishes in the future and the category it belongs to is checked
+                if (eventCategory.isChecked) { //if the event finishes in the future and the category it belongs to is checked
                     const card = this.createCard(event); //call function that creates card
                     list.appendChild(card); //add card to list div
                 }

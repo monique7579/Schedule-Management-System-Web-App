@@ -215,7 +215,7 @@ export class HomeController {
                 return;
             }
         } else { //if the checkbox is unchecked
-            const update = { isChecked: true}; //swtich to checked
+            const update = { isChecked: true }; //swtich to checked
             try {
                 await updateCategory(category.docId, update); //update database to match
                 this.model.updateCategoryList(category, update); //update model to match
@@ -309,7 +309,7 @@ export class HomeController {
 
     //helper for edit event drop down
     selectCategoryByText(text) {
-        const select = document.getElementById('categoryDropdown'); //grabs drop down
+        const select = document.getElementById('categoryDropdown-edit'); //grabs drop down
         for (let i = 0; i < select.options.length; i++) { //iterates over all the dropdown options
             if (select.options[i].textContent.trim() === text.trim()) { //find the one that matches the given category
                 select.selectedIndex = i; //select the correct index
@@ -415,6 +415,11 @@ export class HomeController {
         try {
             await deleteCategory(category.docId); //call function that deletes from database
             this.model.deleteCategoryByDocId(category.docId); //delete from model
+            //testing, need to reload events because they have been edited
+            const eventList = await getEventList(currentUser.uid); //call firestore side to grab events from database
+            this.model.setEventList(eventList); //update model to match
+            this.model.orderEventListByStartTime(); //order events in model by time
+            //testing
             stopSpinner();
             this.view.render(); //render view to match
         } catch (e) { //handle error
