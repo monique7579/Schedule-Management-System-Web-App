@@ -5,7 +5,7 @@ import {
     onAuthStateChanged,
     createUserWithEmailAndPassword,
     sendPasswordResetEmail,
-    updateEmail,
+    verifyBeforeUpdateEmail,
     reauthenticateWithCredential,
     EmailAuthProvider,
 } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-auth.js"
@@ -33,11 +33,11 @@ export async function sendPasswordReset(email) {
     await sendPasswordResetEmail(auth, email);
 }
 
-export async function updateUserEmail(newEmail) {
+export async function requestEmailChange(newEmail) {
     if (!auth.currentUser) {
         throw new Error('No user currently signed in');
     }
-    await updateEmail(auth.currentUser, newEmail);
+    await verifyBeforeUpdateEmail(auth.currentUser, newEmail);
 }
 
 export async function reauthenticateUser(password) {
