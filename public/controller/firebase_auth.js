@@ -71,6 +71,11 @@ onAuthStateChanged(auth, user => {
 
         router.currentView = null;
         spaRoot.innerHTML = ''; //cleared view since we are signing out
-        // glHomeModel.reset(); //reset when sign out
+        // clear the data from the login form once user logs out
+        const loginForm = document.forms.loginForm;
+        if (loginForm) {
+            console.log('clearing login form');
+            loginForm.reset();
+        }
     }
 });

@@ -8,6 +8,11 @@ export class ProfileController {
 
     constructor() {
         this.model = new ProfileModel();
+        this.onClickChangePasswordButton = this.onClickChangePasswordButton.bind(this);
+        this.onClickChangeEmailButton = this.onClickChangeEmailButton.bind(this);
+        this.getPasswordModal = this.getPasswordModal.bind(this);
+        this.showMessageModal = this.showMessageModal.bind(this);
+        this.showPromptModal = this.showPromptModal.bind(this);
     }
 
     setView(view) {
@@ -18,51 +23,108 @@ export class ProfileController {
         console.log('onClickChangePasswordButton called');
         try {
             await sendPasswordReset(currentUser.email);
-            alert('Password reset email sent. Please check your inbox.');
+            await this.showMessageModal('Password reset email sent. Please check your inbox.');
+            await this.showMessageModal('Please log in again after resetting your password.');
             await logoutFirebase();
-            alert('Please log in again after resetting your password.');
         } catch(e) {
             console.error(e);
-            alert('Error sending password reset email');
+            await this.showMessageModal('Error sending password reset email');
         }
     }
 
     async onClickChangeEmailButton(e) {
         console.log('onClickChangeEmailButton called');
-        const newEmail = prompt('Enter your new email address:');
+        const newEmail = await this.showPromptModal('Enter your new email address:');
         if (!newEmail) {
-            alert('Email change cancelled');
+            await this.showMessageModal('Email change cancelled');
             return;
         }
         try {
             await requestEmailChange(newEmail);
-            alert('A verification email has been sent to your new email address. Please check your inbox to complete the update.');
+            await this.showMessageModal('A verification email has been sent to your new email address. Please check your inbox to complete the update.');
+            await this.showMessageModal('Please sign back in with your new email after verifying.');
             await logoutFirebase();
-            alert('Please sign back in with your new email after verifying.');
         } catch(e) {
             console.error(e);
             // firebase requires user to be recently logged in to change email
             if (e.code === 'auth/requires-recent-login') {
-                const password = prompt('Please enter your password to confirm');
+                const password = await this.getPasswordModal();
                 if (!password) {
-                    alert('Cancelled');
+                    await this.showMessageModal('Cancelled');
                     return;
                 }
                 try {
                     await reauthenticateUser(password);
                     await requestEmailChange(newEmail);
-                    alert('A verification email has been sent to your new email address. Please check your inbox to complete the update.');
+                    await this.showMessageModal('A verification email has been sent to your new email address. Please check your inbox to complete the update.');
+                    await this.showMessageModal('Please sign back in with your new email after verifying.');
                     await logoutFirebase();
-                    alert('Please sign back in with your new email after verifying.');
                 } catch(e) {
                     console.error(e);
-                    alert('Failed to change email');
+                    await this.showMessageModal('Failed to change email');
                 }
             } else {
-                alert('Failed to send verification email');
+                await this.showMessageModal('Failed to send verification email');
             }
         }
     }
 
-    
+    async getPasswordModal() {
+        console.log('getPasswordModal called');
+        return new Promise((resolve, reject) => {
+            const passwordModal = new bootstrap.Modal(document.getElementById('passwordAuthModal'));
+            const passwordForm = document.getElementById('passwordForm');
+
+            const handler = (e) => {
+                e.preventDefault();
+                const password = passwordForm.password.value;
+                passwordForm.removeEventListener('submit', handler);
+                passwordModal.hide();
+                resolve(password);
+            };
+
+            passwordForm.addEventListener('submit', handler);
+            passwordModal.show();
+        });
+    }
+
+    async showMessageModal(message) {
+        console.log('showMessageModal called');
+        return new Promise((resolve) => {
+            const messageModal = new bootstrap.Modal(document.getElementById('messageModal'));
+            const messageText = document.getElementById('messageModalText');
+            const okButton = document.getElementById('messageModalOkButton');
+            messageText.textContent = message;
+
+            const handler = () => {
+                okButton.removeEventListener('click', handler);
+                messageModal.hide();
+                resolve();
+            };
+            okButton.addEventListener('click', handler);
+            messageModal.show();
+        });
+    }
+
+    async showPromptModal(promptMessage) {
+        console.log('showPromptModal called');
+        return new Promise((resolve) => {
+            const promptModal = new bootstrap.Modal(document.getElementById('promptModal'));
+            const promptForm = document.getElementById('promptForm');
+            const promptInput = document.getElementById('promptInput');
+            const promptTitle = document.getElementById('promptModalTitle');
+            promptTitle.textContent = promptMessage;
+            promptInput.value = '';
+
+            const handler = (e) => {
+                e.preventDefault();
+                const value = promptInput.value.trim();
+                promptForm.removeEventListener('submit', handler);
+                promptModal.hide();
+                resolve(value);
+            }
+            promptForm.addEventListener('submit', handler);
+            promptModal.show();
+        })
+    }
 }
