@@ -177,7 +177,7 @@ export class HomeController {
         const form = document.forms.formEditEvent; //grab the edit event form
         form.title.value = event.title; //set the title value in form the event title from model
         form.description.value = event.description; //set description value in form to the event description from model
-        form.selectCategoryByText(event.category); //selects the correct category from dropdown based on event category
+        this.selectCategoryByText(event.category); //selects the correct category from dropdown based on event category
         form.start.value = event.start; //match start value to model
         form.finish.value = event.finish; //match finish value to one grabbed from model
         form.reminderBool.value = event.reminderBool; //match reminder check
@@ -213,7 +213,7 @@ export class HomeController {
                 return;
             }
         } else { //if the checkbox is unchecked
-            const update = { isChecked: true}; //swtich to checked
+            const update = { isChecked: true }; //swtich to checked
             try {
                 await updateCategory(category.docId, update); //update database to match
                 this.model.updateCategoryList(category, update); //update model to match
@@ -307,7 +307,7 @@ export class HomeController {
 
     //helper for edit event drop down
     selectCategoryByText(text) {
-        const select = document.getElementById('categoryDropdown'); //grabs drop down
+        const select = document.getElementById('categoryDropdown-edit'); //grabs drop down
         for (let i = 0; i < select.options.length; i++) { //iterates over all the dropdown options
             if (select.options[i].textContent.trim() === text.trim()) { //find the one that matches the given category
                 select.selectedIndex = i; //select the correct index

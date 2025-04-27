@@ -69,7 +69,7 @@ export class EventSearchModel {
 
     //by timestamp for tasks
     orderEventListByStartTime() {
-        this.eventList.sort((a, b) => b.start - a.start);
+        this.eventList.sort((a, b) => new Date(a.start) - new Date(b.start));
     }
 
     //search/filter
