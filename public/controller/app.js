@@ -56,12 +56,6 @@ document.getElementById('logoutButton').onclick = async function(e) {
         await logoutFirebase();
         stopSpinner();
         console.log('user logged out');
-
-        // clear the data from the login form once user logs out
-        const loginForm = document.forms.loginForm;
-        if (loginForm) {
-            loginForm.reset();
-        }
     } catch (e) {
         stopSpinner();
         console.error('Error logging out: ', e);
