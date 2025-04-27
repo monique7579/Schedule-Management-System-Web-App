@@ -13,9 +13,9 @@ import { EventSearchController } from "../controller/EventSearchController.js"
 document.title = 'Augury'; //changes title
 
 const routes = [
-    {path: '/', view: HomeView, controller: HomeController},
-    {path: '/profile', view: ProfileView, controller: ProfileController},
-    {path: '/event-search', view: EventSearchView, controller: EventSearchController },
+    {path: '/', view: HomeView, controller: HomeController}, //sets up path for home view
+    {path: '/profile', view: ProfileView, controller: ProfileController}, //sets up pth for profile page
+    {path: '/event-search', view: EventSearchView, controller: EventSearchController }, //sets up path for events page
 ];
 
 //create an instance of Router

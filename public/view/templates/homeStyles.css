@@ -1,3 +1,4 @@
+/* style for buttons */
 .btn-clay {
 
     border-color: #cc9674;
@@ -9,19 +10,26 @@
     border-color: #cc9674;
     color: #fff;
 }
+/* style for checkboxes */
 .category-checkbox:checked {
     background-color: #cc9674;
     border-color: #cc9674;
     color: #fff;
+}
+.category-checkbox {
+    color: var(--primary-color);
+    accent-color : var(--primary-color);
 }
 
 :root {
     --primary-color: #cc9674;
     --light-color: #eec9b2;
 }
+/* style for modals */
 .modal-clay {
     color: #cc9674 !important;
 }
+/* text styling, input form text, title text etc*/
 .text-clay {
     color: #cc9674;
 }
@@ -31,16 +39,21 @@ textarea.text-clay {
 input.text-clay {
     color: #cc9674 !important;
 }
+/* make scrollbars invisible */
 #event-list::-webkit-scrollbar {
     display: none;  /* Chrome and Safari */
 }
+#category-list::-webkit-scrollbar {
+    display: none;  /* Chrome and Safari */
+}
+/* style to left (category column) */
 .left {
     width: 20%;
     padding: 20px;
     border-right: 4px double var(--light-color);
     border-left: 4px double var(--light-color);
 }
-
+/* style the center column (category) */
 .center {
     display: flex;
     justify-content: center;
@@ -50,20 +63,20 @@ input.text-clay {
     padding: 20px;
     /* border-right: 4px double var(--light-color); */
 }
-
+/* style the right column (events home page) */
 .right {
     width: 20%;
     padding: 20px;
     border-right: 4px double var(--light-color);
     border-left: 4px double var(--light-color);
 }
-
+/* style right column (events events page) */
 .right-events {
     width: 80%;
     padding: 20px;
     border-right: 4px double var(--light-color);
 }
-
+/* style individual calendar day block */
 .calendar-day {
     width: 90px; /* or 14.28%*/
     position: relative;
@@ -75,7 +88,7 @@ input.text-clay {
     color: var(--primary-color);
     border: 1px solid var(--primary-color);
 }
-
+/* style if the calendar day has an event during */
 .calendar-day-event {
     width: 90px; /* or 14.28%*/
     position: relative;
@@ -97,15 +110,13 @@ input.text-clay {
     background-color: var(--primary-color);
     border-radius: 2px;
 }
-
+/* style if the day is the current date */
 .today {
-    /* background-color: var(--primary-color); */
     background-color: color-mix(in srgb, var(--light-color), transparent 60%);
-    /* border: 2px solid #ff69b4; */
     font-weight: bold;
     font-size: 1.7rem;
-    /* color: #fff; */
 }
+/* style if day is not in the current month */
 .calendar-day-prev {
     width: 90px; /* or 14.28%*/
     position: relative;
@@ -115,23 +126,17 @@ input.text-clay {
     justify-content: right;
     cursor: pointer;
 }
+/* style to top of the calendar */
 .calendar-header {
     width: 90px;
     justify-content: center;
     position: relative;
     color: var(--primary-color);
-    /* border: 1px solid var(--light-color); */
 }
+/* style the month of the calendar */
 .calendar-month-label {
     width: 450px;
     justify-content: center;
     position: relative;
     color: var(--primary-color);
-}
-.clay-txt {
-    color: var(--primary-color);
-}
-.category-checkbox {
-    color: var(--primary-color);
-    accent-color : var(--primary-color);
 }

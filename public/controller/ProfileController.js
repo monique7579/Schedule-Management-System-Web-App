@@ -19,52 +19,52 @@ export class ProfileController {
         this.view = view;
     }
 
-    async onClickChangePasswordButton(e) {
-        console.log('onClickChangePasswordButton called');
+    async onClickChangePasswordButton(e) { //listener for changing password
+        // console.log('onClickChangePasswordButton called');
         try {
-            await sendPasswordReset(currentUser.email);
-            await this.showMessageModal('Password reset email sent. Please check your inbox.');
-            await this.showMessageModal('Please log in again after resetting your password.');
-            await logoutFirebase();
-        } catch(e) {
+            await sendPasswordReset(currentUser.email); //call function that calls database function
+            await this.showMessageModal('Password reset email sent. Please check your inbox.'); //notify user
+            await this.showMessageModal('Please log in again after resetting your password.'); //alert user of what is happening
+            await logoutFirebase(); //call firestore function
+        } catch(e) { //handle error
             console.error(e);
             await this.showMessageModal('Error sending password reset email');
         }
     }
 
-    async onClickChangeEmailButton(e) {
-        console.log('onClickChangeEmailButton called');
-        const newEmail = await this.showPromptModal('Enter your new email address:');
-        if (!newEmail) {
-            await this.showMessageModal('Email change cancelled');
+    async onClickChangeEmailButton(e) { //listener for change email button
+        // console.log('onClickChangeEmailButton called');
+        const newEmail = await this.showPromptModal('Enter your new email address:'); //promt user to enter new email address
+        if (!newEmail) { //if there is no new email
+            await this.showMessageModal('Email change cancelled'); //alert user
             return;
         }
         try {
-            await requestEmailChange(newEmail);
-            await this.showMessageModal('A verification email has been sent to your new email address. Please check your inbox to complete the update.');
-            await this.showMessageModal('Please sign back in with your new email after verifying.');
-            await logoutFirebase();
-        } catch(e) {
+            await requestEmailChange(newEmail); //call firebase function for database side
+            await this.showMessageModal('A verification email has been sent to your new email address. Please check your inbox to complete the update.'); //alert user of verification
+            await this.showMessageModal('Please sign back in with your new email after verifying.'); //alert user to log back in
+            await logoutFirebase(); //call firebase function to log user out after change
+        } catch(e) { //handle error
             console.error(e);
             // firebase requires user to be recently logged in to change email
             if (e.code === 'auth/requires-recent-login') {
-                const password = await this.getPasswordModal();
-                if (!password) {
-                    await this.showMessageModal('Cancelled');
+                const password = await this.getPasswordModal(); //prompt user for password
+                if (!password) { //if no password
+                    await this.showMessageModal('Cancelled'); //cancel and tell user
                     return;
                 }
                 try {
-                    await reauthenticateUser(password);
-                    await requestEmailChange(newEmail);
-                    await this.showMessageModal('A verification email has been sent to your new email address. Please check your inbox to complete the update.');
-                    await this.showMessageModal('Please sign back in with your new email after verifying.');
-                    await logoutFirebase();
-                } catch(e) {
+                    await reauthenticateUser(password); //call firebase functions , authenticate user
+                    await requestEmailChange(newEmail); //email change
+                    await this.showMessageModal('A verification email has been sent to your new email address. Please check your inbox to complete the update.'); //notify user of email
+                    await this.showMessageModal('Please sign back in with your new email after verifying.'); //alert user to sign back in
+                    await logoutFirebase(); //log out user
+                } catch(e) { //handle error
                     console.error(e);
                     await this.showMessageModal('Failed to change email');
                 }
             } else {
-                await this.showMessageModal('Failed to send verification email');
+                await this.showMessageModal('Failed to send verification email'); //notify if there was an issue
             }
         }
     }

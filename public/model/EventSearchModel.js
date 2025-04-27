@@ -40,14 +40,6 @@ export class EventSearchModel {
         Object.assign(category, update);
     }
 
-    // prependCategory(category) {
-    //     this.categoryList.unshift(category);
-    // }
-
-    // prependEvent(event) {
-    //     this.eventList.unshift(event);
-    // }
-
     //delete
     deleteEventByDocId(docId) {
         const index = this.eventList.findIndex(event => event.docId == docId);
@@ -83,21 +75,19 @@ export class EventSearchModel {
     //search/filter
     //fullEventList should be fetched from firestore before calling function, want most up to date version
     filterEvents(searchInput, fullEventList) {
-        console.log('filterEvents called from model');
-
-        //if search is empty, we won't filter, just reset to full list
-        if (!searchInput || searchInput.trim() === '') {
+        // console.log('filterEvents called from model');
+        
+        if (!searchInput || searchInput.trim() === '') { //if search is empty, we won't filter, just reset to full list
             this.eventList = [...fullEventList];
             return;
         }
 
         const search = searchInput.toLowerCase().trim(); //trim whitespace and toLower for case-insensitive comparison
-        const filteredEvents = fullEventList.filter(event =>
-            event.title.toLowerCase().trim().includes(search) ||
-            event.description.toLowerCase().trim().includes(search)
+        const filteredEvents = fullEventList.filter(event => //set filteredEvents to search results
+            event.title.toLowerCase().trim().includes(search) || //search for match in titles
+            event.description.toLowerCase().trim().includes(search) //search for match in descriptions
         );
-        console.log('filtered events from model');
-
-        this.setEventList(filteredEvents);
+        // console.log('filtered events from model');
+        this.setEventList(filteredEvents); //set event list to filtered events, this is for simplicity in view rendering
     }
 }
