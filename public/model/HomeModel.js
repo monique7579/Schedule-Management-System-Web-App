@@ -78,22 +78,18 @@ export class HomeModel {
         this.eventList.sort((a, b) => b.start - a.start);
     }
 
-    //find if given date has event occurring during it 
-    //if start day(month and year) equal
-    //if fin day equal
-    //if start is less than and fin is greater than
     hasEvent(date) {
         const targetTime = date.setHours(0, 0, 0, 0); // normalize target to start of day
 
         for (const event of this.eventList) {
-            const startDate = new Date(event.start);
-            const finishDate = new Date(event.finish);
+            const startDate = new Date(event.start); //convert start time into a date type
+            const finishDate = new Date(event.finish); //convert end time into a date type
 
             const startTime = startDate.setHours(0, 0, 0, 0); // start of day
             const finishTime = finishDate.setHours(23, 59, 59, 999); // end of day
 
-            if (
-                targetTime >= startTime &&
+            if ( // checks is given date is within an event time
+                targetTime >= startTime && 
                 targetTime <= finishTime
             ) {
                 return true;

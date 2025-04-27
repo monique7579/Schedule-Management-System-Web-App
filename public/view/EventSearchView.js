@@ -68,7 +68,7 @@ export class EventSearchView extends AbstractView {
             for (const category of this.controller.model.categoryList) { //for every category in the list from the model
                 const categoryCheck = document.createElement('div'); //create a div for form to go in
                 categoryCheck.className = 'form-check category-checkbox-div text-clay'; //create check box with label == category title
-                categoryCheck.id = `${category.docId}`;
+                categoryCheck.id = `${category.docId}`; //set the id so it matches the category it is representing
                 categoryCheck.innerHTML = `
                     <input class="form-check-input category-checkbox btn-clay" data-category="${category.docID}" type="checkbox" value="" id="${category.docId}-input" ${category.isChecked ? 'checked' : ''}>
                     <label class="form-check-label" for="${category.docId}-input">
@@ -100,18 +100,18 @@ export class EventSearchView extends AbstractView {
         clearButton.innerHTML = 'Clear Search'; //text on btn
         clearButton.id = 'clear-btn';
 
-        const searchBar = document.createElement('div');
-        searchBar.name = 'formSearchEvent';
-        searchBar.classList.add('d-flex', 'gap-2', 'flex-grow-1');
+        const searchBar = document.createElement('div'); //create div for search bar
+        searchBar.name = 'formSearchEvent'; //set form name
+        searchBar.classList.add('d-flex', 'gap-2', 'flex-grow-1'); //style with bootstrap
         searchBar.innerHTML = `
                 <form class="d-flex gap-2 flex-grow-1" name="formSearchEvent">
                     <input id="item-name" name="name" class="form-control  text-clay" type="text" placeholder="" required minlength="2">
                     <button id="create-btn" type="submit" class="btn  btn-clay"><i class="bi bi-search"></i></button>
                 </form>
             `;
-        searchDiv.appendChild(clearButton);
-        searchDiv.appendChild(searchBar); //add search button to header
-        eventHeader.appendChild(searchDiv);
+        searchDiv.appendChild(clearButton); //add clear button to bar
+        searchDiv.appendChild(searchBar); //add search button to bar
+        eventHeader.appendChild(searchDiv); //add bar to hearder
         eventColumn.appendChild(eventHeader); //add header to event column div
 
         const events = this.renderEventList(); //call function that renders and returns event list
@@ -125,8 +125,7 @@ export class EventSearchView extends AbstractView {
         list.id = 'event-list'; //id, also used for css styling in this case
         list.className = 'mt-3 overflow-auto'; //bootstrap styling
         list.style = "max-height: 500px;"; //caps off how tall the list can appear no matter how many events (becomes scrollable)
-        const today = new Date();
-        // today.setHours(0, 0, 0, 0);
+        const today = new Date(); //get current date
 
         if (this.controller.model.eventList.length === 0) { //if no events upcoming 
             const noData = document.createElement('div');
@@ -134,17 +133,12 @@ export class EventSearchView extends AbstractView {
             list.appendChild(noData);
         } else {
             for (const event of this.controller.model.eventList) { //for every event in list
-                //if fin date is in the future
-                const eventCategory = this.controller.model.getCategoryByTitle(event.category);
-                const categoryCheckBox = document.querySelector(`[data-category="${event.category}"]`);
-                // console.log('categoryCheckBox', categoryCheckBox);
-                const finishDate = new Date(event.finish);
-                if (finishDate >= today && eventCategory.isChecked) {
+                const eventCategory = this.controller.model.getCategoryByTitle(event.category);//get corresponding category from model
+                const finishDate = new Date(event.finish); //grab finish and convert to date type
+                if (finishDate >= today && eventCategory.isChecked) { //if the event finishes in the future and the category it belongs to is checked
                     const card = this.createCard(event); //call function that creates card
                     list.appendChild(card); //add card to list div
                 }
-                //if category is checked
-
             }
         }
         return list; //return the list to be added the column
@@ -167,11 +161,10 @@ export class EventSearchView extends AbstractView {
     }
         
     async populateCategoryDropdownEdit() {
-        // const select = document.getElementById('categoryDropdown'); 
         const select = document.getElementById('categoryDropdown-edit'); //grab the corresponding drop down from the modal
         if (!select) { //if not found (should never happen)
             console.log('didnt find categorydropdown');
-            return;
+            return; //do not continue function
         }
         try {
             for (const category of this.controller.model.categoryList) { //for every category from the modal
@@ -183,45 +176,35 @@ export class EventSearchView extends AbstractView {
         } catch (e) { //handle any error that occurs
             console.error("Error loading categories", e);
         }
-
-        //try 
-
     }
 
 
-    async attachEvents() {
-        console.log('EventSearchView.attachEvents() called');
+    async attachEvents() { //attach all of the event listeners
+        // console.log('EventSearchView.attachEvents() called');
         await this.populateCategoryDropdownEdit(); //could be placed elsewhere but this worked for now
-      // document.forms.formCreateItem.onsubmit = this.controller.onSubmitSearch;
 
-        document.forms.formSearchEvent.onsubmit = this.controller.onClickSearchButton;
+        document.forms.formSearchEvent.onsubmit = this.controller.onClickSearchButton; //attack listener to the search bar form
 
-        const clearBtn = document.getElementById('clear-btn');
-        clearBtn.onclick = this.controller.onClickClearButton;
+        const clearBtn = document.getElementById('clear-btn'); //grab clear button
+        clearBtn.onclick = this.controller.onClickClearButton; //attach listener to the clear button
 
-        document.querySelectorAll('.card-event').forEach(card => {
+        document.querySelectorAll('.card-event').forEach(card => { //attach listeners to all event cards
             card.onclick = this.controller.onClickEventCard; //left click
             card.oncontextmenu = this.controller.onRightClickEventCard; //right click
         });
 
-        // document.querySelectorAll('.category-checkbox').forEach(checkbox => {
-        //     checkbox.onclick = this.controller.onClickCategoryCheck; //left click
-        // });
-
-        document.querySelectorAll('.category-checkbox-div').forEach(checkbox => {
+        document.querySelectorAll('.category-checkbox-div').forEach(checkbox => { //attach listener to all category checkboxes
             checkbox.oncontextmenu = this.controller.onRightClickCategoryCheck; //right click
         });
 
-        document.querySelectorAll('.category-checkbox-div').forEach(checkbox => {
+        document.querySelectorAll('.category-checkbox-div').forEach(checkbox => { //attach listener to all category checkboxes
             checkbox.onchange = this.controller.onClickCategoryCheck; //left click
         });
         
-        const editCategoryBtn = document.getElementById('btn-editCategory');
-        editCategoryBtn.onclick = this.controller.onClickEditButton;
-        const deleteCategoryBtn = document.getElementById('btn-deleteCategory');
-        deleteCategoryBtn.onclick = this.controller.onClickDeleteButton;
-
-        //to do: attach listener to click on event (i.e. right click brings up edit)
+        const editCategoryBtn = document.getElementById('btn-editCategory'); //grab edit category btn
+        editCategoryBtn.onclick = this.controller.onClickEditButton; //attach listener for edit category
+        const deleteCategoryBtn = document.getElementById('btn-deleteCategory'); //grab delete category button
+        deleteCategoryBtn.onclick = this.controller.onClickDeleteButton; //attach listener to delete category btn
 
         //this makes it so that the reminder drop down in the edit model is only enabled when the checkbox is checked
         const checkbox = document.getElementById('checkDefaultEdit');

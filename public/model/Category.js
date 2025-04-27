@@ -3,7 +3,7 @@ export class Category {
     title = null; //a category to the user is just a name
     isChecked = null; //boolean value to be used for filtering events, default to true
     isDefault = false; //must have at least the default category, so identification required in that aspect
-    docId = null; 
+    docId = null; //to uniquely identify 
 
     constructor(data) {
         this.uid = data.uid;
@@ -16,17 +16,8 @@ export class Category {
     set_docId(docId) {
         this.docId = docId;
     }
-
-    //helper for rendering by category selected
-    set_isChecked(isChecked) {
-        this.isChecked = isChecked;
-    }
     
-    get_isChecked() {
-        return this.isChecked;
-    }
-    
-    toFirestore() {
+    toFirestore() { //convert into an object firestore can handle
         return {
             uid: this.uid,
             title: this.title,

@@ -20,43 +20,36 @@ export class ProfileView extends AbstractView {
     async updateView() { 
         console.log('ProfileView.updateView() called');
         const viewWrapper = document.createElement('div');
-        const response = await fetch('/view/templates/profile.html', {cache: 'no-store'}); //to use await functin must be async
-        viewWrapper.innerHTML = await response.text();
         const profileContent = document.createElement('div');
         profileContent.innerHTML = `
             <h1 class="text-clay">Profile</h1>
             <p class="text-clay">Welcome to your profile page.</p>
             <p class="text-clay">Email: ${currentUser.email}</p>
-            <p class="text-clay">User UID: ${currentUser.uid}</p>
         `;
 
-        const changePasswordButton = document.createElement('button');
-        changePasswordButton.id = 'changePasswordButton';
-        changePasswordButton.classList.add('btn', 'btn-clay', 'm-2');
-        changePasswordButton.innerHTML = 'Change Password';
-        profileContent.appendChild(changePasswordButton);
-        viewWrapper.appendChild(profileContent);    
+        const changePasswordButton = document.createElement('button'); //create btn
+        changePasswordButton.id = 'changePasswordButton'; //id
+        changePasswordButton.classList.add('btn', 'btn-clay', 'm-2'); //style btn css and bootstrap
+        changePasswordButton.innerHTML = 'Change Password'; //btn lable
+        profileContent.appendChild(changePasswordButton); //add to profile content
 
-        const changeEmailButton = document.createElement('button');
-        changeEmailButton.id = 'changeEmailButton';
-        changeEmailButton.classList.add('btn', 'btn-clay', 'm-2');
-        changeEmailButton.innerHTML = 'Change Email';
-        profileContent.appendChild(changeEmailButton);
+        const changeEmailButton = document.createElement('button'); //create btn
+        changeEmailButton.id = 'changeEmailButton'; //id
+        changeEmailButton.classList.add('btn', 'btn-clay', 'm-2'); //style with bootstrap and css
+        changeEmailButton.innerHTML = 'Change Email'; //btn label
+        profileContent.appendChild(changeEmailButton); //add to profile content
+        viewWrapper.appendChild(profileContent); //add profile content to view
         
         return viewWrapper;
-
-        //note: anything that we want to render in profile i.e. usrname, email etc will be put hear
     }
 
-    attachEvents() { 
+    attachEvents() { //attach listeners
         console.log('ProfileView.attachEvents() called');
 
-        const changePasswordButton = document.getElementById('changePasswordButton');
-        changePasswordButton.onclick = this.controller.onClickChangePasswordButton;
-        const changeEmailButton = document.getElementById('changeEmailButton');
-        changeEmailButton.onclick = this.controller.onClickChangeEmailButton;
-
-        //note: if there are any buttons we put in profile (i.e. change password etc) their listeners will be attached here
+        const changePasswordButton = document.getElementById('changePasswordButton'); //grab change password btn
+        changePasswordButton.onclick = this.controller.onClickChangePasswordButton; //attach listener for password change
+        const changeEmailButton = document.getElementById('changeEmailButton'); //grab change email btn
+        changeEmailButton.onclick = this.controller.onClickChangeEmailButton; //attach listener for email change
     }
 
     async onLeave() {

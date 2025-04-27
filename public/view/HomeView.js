@@ -41,20 +41,20 @@ export class HomeView extends AbstractView {
 
     //function that renders category column
     buildCategoryColumn() {
-        console.log('HomeView.buildCategoryColumn() called');
+        // console.log('HomeView.buildCategoryColumn() called');
         const categoryColumn = document.createElement('div'); //create div element to contain all elements of this column
         categoryColumn.classList.add('left'); //class for css style purposes
 
         const title = document.createElement('h4'); //title of header
-        title.innerHTML = "Categories";
+        title.innerHTML = "Categories"; //add title
         title.classList.add('text-clay'); //style
-        categoryColumn.appendChild(title);
+        categoryColumn.appendChild(title); //add title to column
 
         const addCategory = document.createElement('button'); //create button for creating category, this will link to the modal
         addCategory.classList.add('btn-clay', 'btn'); //style classes for css
         addCategory.innerHTML = 'Add Category'; //text on button
         addCategory.setAttribute('data-bs-toggle', 'modal'); //attributes that connect it to the modal
-        addCategory.setAttribute('data-bs-target', '#modaladdCategory');
+        addCategory.setAttribute('data-bs-target', '#modaladdCategory'); 
 
         const addCategoryModal = document.createElement('div'); //create div element for modal to go in
         addCategoryModal.className = 'modal fade'; //classes for bootstrap modal
@@ -110,7 +110,7 @@ export class HomeView extends AbstractView {
             for (const category of this.controller.model.categoryList) { //for every category in the list from the model
                 const categoryCheck = document.createElement('div'); //create a div for form to go in
                 categoryCheck.className = 'form-check category-checkbox-div text-clay'; //create check box with label == category title
-                categoryCheck.id = `${category.docId}`;
+                categoryCheck.id = `${category.docId}`; //set id to match the category it is representing
                 categoryCheck.innerHTML = `
                     <input class="form-check-input category-checkbox btn-clay" data-category="${category.docID}" type="checkbox" value="" id="${category.docId}-input" ${category.isChecked ? 'checked' : ''}>
                     <label class="form-check-label" for="${category.docId}-input">
@@ -129,20 +129,11 @@ export class HomeView extends AbstractView {
         const eventColumn = document.createElement('div'); //create div to hold all elements of the column
         eventColumn.classList.add('right'); //class for css styling purposes
         const eventHeader = document.createElement('div'); //create div for heading of column
-        // eventHeader.classList.add('d-flex', 'align-items-center',); //style for proper layout
         const title = document.createElement('h4'); //title of header
-        title.innerHTML = "Upcoming";
+        title.innerHTML = "Upcoming"; //set title
         title.classList.add('text-clay'); //style
         eventHeader.appendChild(title); //add title to header div
 
-        // const searchBar = document.createElement('div');
-        // searchBar.innerHTML = `
-        //         <form class="d-flex gap-2 pb-2" name="formCreateItem">
-        //             <input id="item-name" name="name" class="form-control form-control-sm text-clay" type="text" placeholder="" required minlength="2">
-        //             <button id="create-btn" type="submit" class="btn btn-sm btn-clay"><i class="bi bi-search"></i></button>
-        //         </form>
-        //     `;
-        // eventHeader.appendChild(searchBar); //add search button to header
         eventColumn.appendChild(eventHeader); //add header to event column div
 
         //this is the button to add an event
@@ -183,7 +174,7 @@ export class HomeView extends AbstractView {
               </div>
               <div class="mb-3"> 
                 <label class="form-label">Category</label>
-                <select class="form-select text-clay" id="categoryDropdown" name="category" aria-label="Default select example">
+                <select class="form-select text-clay" id="categoryDropdown" name="category" aria-label="Default select example" required>
                     
                 </select>
               </div>
@@ -221,11 +212,11 @@ export class HomeView extends AbstractView {
         eventColumn.appendChild(addEventModal); //add the modal to the event column
         eventColumn.appendChild(addEvent); //add the button the the most
 
-        setTimeout(() => {
-            const checkbox = addEventModal.querySelector('input[name="reminderBool"]');
-            const select = addEventModal.querySelector('select[name="reminderTime"]');
+        setTimeout(() => { //this enables and disables the reminder dropdown based on the reminder check box
+            const checkbox = addEventModal.querySelector('input[name="reminderBool"]'); //grab checkbox
+            const select = addEventModal.querySelector('select[name="reminderTime"]'); //grab dropdown
 
-            checkbox.addEventListener('change', () => {
+            checkbox.addEventListener('change', () => { //add listener
                 select.disabled = !checkbox.checked;
             });
         }, 0);
@@ -238,8 +229,7 @@ export class HomeView extends AbstractView {
 
     //add categories to the dropdown in the event add form, this is done dynamically since each user has a seperate list of categories that is saved in firestore and in model
     async populateCategoryDropdown() {
-        const select = document.getElementById('categoryDropdown');
-        const selectEdit = document.getElementById('categoryDropdown-edit'); //grab the corresponding drop down from the modal
+        const select = document.getElementById('categoryDropdown'); //get category drop down
         if (!select) { //if not found (should never happen)
             console.log('didnt find categorydropdown');
             return;
@@ -257,7 +247,6 @@ export class HomeView extends AbstractView {
     }
 
     async populateCategoryDropdownEdit() {
-        // const select = document.getElementById('categoryDropdown'); 
         const select = document.getElementById('categoryDropdown-edit'); //grab the corresponding drop down from the modal
         if (!select) { //if not found (should never happen)
             console.log('didnt find categorydropdown');
@@ -284,8 +273,7 @@ export class HomeView extends AbstractView {
         list.id = 'event-list'; //id, also used for css styling in this case
         list.className = 'mt-3 overflow-auto'; //bootstrap styling
         list.style = "max-height: 500px;"; //caps off how tall the list can appear no matter how many events (becomes scrollable)
-        const today = new Date();
-        // today.setHours(0, 0, 0, 0);
+        const today = new Date(); //grab current date
 
         if (this.controller.model.eventList.length === 0) { //if no events upcoming 
             const noData = document.createElement('div');
@@ -293,17 +281,12 @@ export class HomeView extends AbstractView {
             list.appendChild(noData);
         } else {
             for (const event of this.controller.model.eventList) { //for every event in list
-                //if fin date is in the future
                 const eventCategory = this.controller.model.getCategoryByTitle(event.category);
-                // const categoryCheckBox = document.querySelector(`[data-category="${event.category}"]`);
-                // console.log('categoryCheckBox', categoryCheckBox);
                 const finishDate = new Date(event.finish);
-                if (finishDate >= today && eventCategory.isChecked ) {
+                if (finishDate >= today && eventCategory.isChecked ) { //if event is in the future and its category is checked
                     const card = this.createCard(event); //call function that creates card
                     list.appendChild(card); //add card to list div
                 }
-                //if category is checked
-
             }
         }
         return list; //return the list to be added the column
@@ -394,20 +377,15 @@ export class HomeView extends AbstractView {
             const date = new Date(currentYear,currentMonth,dayCounter);
             if (this.controller.model.hasEvent(date)) {
                 currentRow.push(`<div class="col-1 calendar-day calendar-day-event">${dayCounter}</div>`);
-                // console.log('there is an event this date', date);
             } else {
                 currentRow.push(`<div class="col-1 calendar-day">${dayCounter}</div>`);
-                // console.log('there are no events');
             }
-            // dayCounter++;
-            // currentRow.push(`<div class="col-1 calendar-day">${dayCounter}</div>`);
             dayCounter++;
         }
         rows.push(currentRow);
         currentRow = [];
 
         // add rest of days
-
         const today = new Date();
         while (dayCounter <= daysInMonth) {
             for (let i = 0; i < 7; i++) {
@@ -423,13 +401,9 @@ export class HomeView extends AbstractView {
                     let eventClass;
                     if (this.controller.model.hasEvent(date)) {
                         eventClass = 'calendar-day-event';
-                        // console.log('there is an event this date', date);
                     } else {
                         eventClass = '';
-                        // console.log('there are no events');
                     }
-
-                    // const eventClass = this.controller.model.hasEvent(date) ? 'calendar-day-event' : '';
                     currentRow.push(`<div class="col-1 ${dayClass} ${eventClass}">${dayCounter}</div>`);
                     dayCounter++;
                 }
@@ -448,8 +422,6 @@ export class HomeView extends AbstractView {
         return calendar;
     }
 
-    //to do: create function that renders event list (called per day)
-
     //attach the event listeners to buttons
     async attachEvents() {
         console.log('HomeView.attachEvents() called');
@@ -465,36 +437,31 @@ export class HomeView extends AbstractView {
 
         document.forms.formAddCategory.onsubmit = this.controller.onSubmitAddCategory; //attach listener to submit button of AddCategory modal/form (defined in HomeController.js)
 
-        document.querySelectorAll('.card-event').forEach(card => {
+        document.querySelectorAll('.card-event').forEach(card => { //listeners for cards
             card.onclick = this.controller.onClickEventCard; //left click
             card.oncontextmenu = this.controller.onRightClickEventCard; //right click
         });
 
-        // document.querySelectorAll('.category-checkbox').forEach(checkbox => {
-        //     checkbox.onclick = this.controller.onClickCategoryCheck; //left click
-        // });
-
-        document.querySelectorAll('.category-checkbox-div').forEach(checkbox => {
+        document.querySelectorAll('.category-checkbox-div').forEach(checkbox => { //listener for checkboxes
             checkbox.oncontextmenu = this.controller.onRightClickCategoryCheck; //right click
         });
 
-        document.querySelectorAll('.category-checkbox-div').forEach(checkbox => {
+        document.querySelectorAll('.category-checkbox-div').forEach(checkbox => { //listener for checkboxes
             checkbox.onchange = this.controller.onClickCategoryCheck; //left click
         });
         
-        const editCategoryBtn = document.getElementById('btn-editCategory');
-        editCategoryBtn.onclick = this.controller.onClickEditButton;
-        const deleteCategoryBtn = document.getElementById('btn-deleteCategory');
-        deleteCategoryBtn.onclick = this.controller.onClickDeleteButton;
+        const editCategoryBtn = document.getElementById('btn-editCategory'); //grab edit category btn
+        editCategoryBtn.onclick = this.controller.onClickEditButton; //attach listener for edit category btn
+        const deleteCategoryBtn = document.getElementById('btn-deleteCategory'); //grab delete btn
+        deleteCategoryBtn.onclick = this.controller.onClickDeleteButton; //attach listener to delete btn
 
-        //to do: attach listener to click on event (i.e. right click brings up edit)
 
         //this makes it so that the reminder drop down in the edit model is only enabled when the checkbox is checked
-        const checkbox = document.getElementById('checkDefaultEdit');
-        const select = document.getElementById('dropdown-remindertime');
+        const checkbox = document.getElementById('checkDefaultEdit'); //grab check box
+        const select = document.getElementById('dropdown-remindertime'); //grab drop down
 
         if (checkbox && select) {
-            checkbox.addEventListener('change', () => {
+            checkbox.addEventListener('change', () => { //attch listener
                 select.disabled = !checkbox.checked;
             });
         }
