@@ -36,6 +36,8 @@ export class HomeView extends AbstractView {
         const right = this.buildEventColumn(); //call function to render event column, the right column
         viewWrapper.appendChild(right); //append right column to "master" view
 
+        this.addMsgModals(viewWrapper); //call function to style popup modals for alerts
+
         return viewWrapper; //return the "master" view, will be rendered in super class render()
     }
 
@@ -262,9 +264,6 @@ export class HomeView extends AbstractView {
         } catch (e) { //handle any error that occurs
             console.error("Error loading categories", e);
         }
-
-        //try 
-
     }
 
     //function to render event list, called in buildEventColumn
@@ -420,6 +419,48 @@ export class HomeView extends AbstractView {
             calendar.appendChild(rowElement);
         });
         return calendar;
+    }
+
+    addMsgModals(viewWrapper) {
+        //message modal
+        const messageModal = document.createElement('div');
+        messageModal.innerHTML = `
+            <div id="messageModal" class="modal fade" tabindex="-1">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            <p id="messageModalText" class="text-clay"></p>
+                        </div>
+                        <div class="modal-footer">
+                            <button id="messageModalOkButton" type="button" class="btn btn-clay" data-bs-dismiss="modal">OK</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+        viewWrapper.appendChild(messageModal);
+
+        //confirmation modal
+        const confirmModal = document.createElement('div');
+        confirmModal.innerHTML = `
+            <div id="confirmModal" class="modal fade" tabindex="-1">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-body">
+                            <p id="confirmModalText" class="text-clay"></p>
+                        </div>
+                        <div class="modal-footer">
+                            <button id="confirmModalCancelButton" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <button id="confirmModalConfirmButton" type="button" class="btn btn-danger">Delete</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+        viewWrapper.appendChild(confirmModal);
     }
 
     //attach the event listeners to buttons

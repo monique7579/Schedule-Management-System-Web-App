@@ -25,6 +25,8 @@ export class HomeController {
         this.onRightClickCategoryCheck = this.onRightClickCategoryCheck.bind(this);
         this.onClickEditButton = this.onClickEditButton.bind(this);
         this.onClickDeleteButton = this.onClickDeleteButton.bind(this);
+        this.showMessageModal = this.showMessageModal.bind(this);
+        this.showConfirmModal = this.showConfirmModal.bind(this);
     }
 
     setView(view) {
@@ -43,7 +45,7 @@ export class HomeController {
             stopSpinner();
             console.error(e);
             this.model.setCategoryList([]);
-            alert('Error loading categories');
+            await this.showMessageModal('Error loading categories');
         }
     }
 
@@ -58,7 +60,7 @@ export class HomeController {
             stopSpinner();
             console.error(e);
             this.model.setEventList([]);
-            alert('Error loading tasks');
+            await this.showMessageModal('Error loading tasks');
         }
     }
 
@@ -81,7 +83,7 @@ export class HomeController {
         const startDate = new Date(start);
         const finishDate = new Date(finish);
         if (startDate > finishDate) {
-            alert('Start has to be a earlier date and time than finish!');
+            await this.showMessageModal('Start has to be a earlier date and time than finish!');
             return;
         }
 
@@ -104,7 +106,7 @@ export class HomeController {
         } catch (e) { //handle error
             stopSpinner();
             console.error(e);
-            alert('Error adding event to Firestore');
+            await this.showMessageModal('Error adding event to Firestore');
             return;
         }
         this.model.prependEvent(event); //update model, model + firestore should match
@@ -121,7 +123,7 @@ export class HomeController {
 
         for (let i = 0; i < this.model.categoryList.length; i++) { //this makes it so they user cannot create duplicate categories (not case sensitive)
             if (title === this.model.categoryList[i].title) { //if the title is the same as a title that already exists
-                alert(`${title} already exists.`); //tell user
+                await this.showMessageModal(`${title} already exists.`); //tell user
                 return; //don't continue function
             }
         }
@@ -140,7 +142,7 @@ export class HomeController {
         } catch (e) { //handle error
             stopSpinner();
             console.error(e);
-            alert('Error adding category to Firestore');
+            await this.showMessageModal('Error adding category to Firestore');
             return;
         }
         this.model.prependCategory(category); //add category to model
@@ -209,7 +211,7 @@ export class HomeController {
             } catch (e) { //handle error
                 stopSpinner();
                 console.error(e);
-                alert('Error updating category');
+                await this.showMessageModal('Error updating category');
                 return;
             }
         } else { //if the checkbox is unchecked
@@ -220,7 +222,7 @@ export class HomeController {
             } catch (e) { //handle error
                 stopSpinner();
                 console.error(e);
-                alert('Error updating category');
+                await this.showMessageModal('Error updating category');
                 return;
             }
         }
@@ -283,7 +285,7 @@ export class HomeController {
         const startDate = new Date(start); //convert start to date type for comparison
         const finishDate = new Date(finish); //convert finsih to date type for comparison
         if (startDate > finishDate) {
-            alert('Start has to be a earlier date and time than finish!'); //prompt user of issue
+            await this.showMessageModal('Start has to be a earlier date and time than finish!'); //prompt user of issue
             return; //get out of update function, user can resubmit after correcting
         }
 
@@ -300,7 +302,7 @@ export class HomeController {
         } catch (e) { //handle error
             stopSpinner();
             console.error(e);
-            alert('Error updating event');
+            await this.showMessageModal('Error updating event');
             return;
         }
     }
@@ -342,7 +344,7 @@ export class HomeController {
         } catch (e) { //handle errors
             stopSpinner();
             console.error(e);
-            alert(e.message || 'Error updating category');
+            await this.showMessageModal('Error updating category');
             return;
         }
     }
@@ -359,7 +361,8 @@ export class HomeController {
             return;
         }
         //confirm delete 
-        if (!confirm('Delete this event')) { //if they choose cancel
+        const confirmed = await this.showConfirmModal('Delete this event?'); //prompt user to confirm delete event
+        if (!confirmed) { //if they choose cancel
             return; //cancel delete
         }
         startSpinner();
@@ -371,7 +374,7 @@ export class HomeController {
         } catch (e) { //handle error
             stopSpinner();
             console.error(e);
-            alert('Error deleting event');
+            await this.showMessageModal('Error deleting event');
             return;
         }
     }
@@ -402,7 +405,8 @@ export class HomeController {
         const category = this.model.getCategoryByDocId(docId); //get category
         console.log(category); //check, testing purposes
         //don't just delete
-        if (!confirm('Delete this category')) { //if they select cancel on confirm ask
+        const confirmed = await this.showConfirmModal('Delete this category?'); //prompt user for delete confirmation
+        if (!confirmed) { //if they select cancel on confirm ask
             return; //cancel delete
         }
         const b = document.getElementById('modalEditorDeleteCategory-closeBtn'); //close the edit/delete modal when click button
@@ -421,8 +425,52 @@ export class HomeController {
         } catch (e) { //handle error
             stopSpinner();
             console.error(e);
-            alert('Error deleting category');
+            const errorMessage = e?.message || 'Error deleting category';
+            await this.showMessageModal(errorMessage);
             return;
         }
+    }
+
+    // function to show styled message modal with custom message
+    async showMessageModal(message) {
+        return new Promise((resolve) => {
+            const messageModal = new bootstrap.Modal(document.getElementById('messageModal')); //grab message modal
+            const messageText = document.getElementById('messageModalText'); //grab text element inside modal
+            const okButton = document.getElementById('messageModalOkButton'); //grab ok button inside modal
+            messageText.textContent = message; //set text of the modal to the passed message
+            const handler = () => { //handle ok button click
+                okButton.removeEventListener('click', handler); //remove event listener once clicked
+                messageModal.hide(); //hide modal
+                resolve();
+            };
+            okButton.addEventListener('click', handler); //attach listener
+            messageModal.show(); 
+        })
+    }
+
+    async showConfirmModal(message) {
+        // console.log('showConfirmModal called (home)');
+        return new Promise((resolve) => {
+            const confirmModal = new bootstrap.Modal(document.getElementById('confirmModal')); //grab confirmation modal
+            const confirmText = document.getElementById('confirmModalText'); //grab text element inside modal
+            const confirmButton = document.getElementById('confirmModalConfirmButton'); //grab confirm button inside modal
+            const cancelButton = document.getElementById('confirmModalCancelButton'); //grab cancel button inside modal
+            confirmText.textContent = message; //set text of the modal to the passed message
+            const onConfirm = () => { //handle confirmation button click
+                confirmButton.removeEventListener('click', onConfirm); //remove event listeners once clicked
+                cancelButton.removeEventListener('click', onCancel);
+                confirmModal.hide();
+                resolve(true);
+            };
+            const onCancel = () => { //handle cancel button click
+                confirmButton.removeEventListener('click', onConfirm); //remove event listeners once clicked
+                cancelButton.removeEventListener('click', onCancel);
+                confirmModal.hide();
+                resolve(false);
+            };
+            confirmButton.addEventListener('click', onConfirm); //attach listeners
+            cancelButton.addEventListener('click', onCancel);
+            confirmModal.show();
+        });
     }
 }
