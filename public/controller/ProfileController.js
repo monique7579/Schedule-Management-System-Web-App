@@ -70,7 +70,7 @@ export class ProfileController {
     }
 
     async getPasswordModal() {
-        console.log('getPasswordModal called');
+        // console.log('getPasswordModal called');
         return new Promise((resolve, reject) => {
             const passwordModal = new bootstrap.Modal(document.getElementById('passwordAuthModal'));
             const passwordForm = document.getElementById('passwordForm');
