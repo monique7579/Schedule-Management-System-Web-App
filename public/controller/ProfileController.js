@@ -69,62 +69,62 @@ export class ProfileController {
         }
     }
 
-    async getPasswordModal() {
+    async getPasswordModal() { //function for password reauth modal
         // console.log('getPasswordModal called');
-        return new Promise((resolve, reject) => {
-            const passwordModal = new bootstrap.Modal(document.getElementById('passwordAuthModal'));
-            const passwordForm = document.getElementById('passwordForm');
+        return new Promise((resolve) => {
+            const passwordModal = new bootstrap.Modal(document.getElementById('passwordAuthModal')); //get the modal
+            const passwordForm = document.getElementById('passwordForm'); //get the password form elemeent
 
-            const handler = (e) => {
+            const handler = (e) => { //handle the password submission
                 e.preventDefault();
-                const password = passwordForm.password.value;
-                passwordForm.removeEventListener('submit', handler);
-                passwordModal.hide();
+                const password = passwordForm.password.value; //get the password value entered by user
+                passwordForm.removeEventListener('submit', handler); //remove the handler after submitting
+                passwordModal.hide(); //hide the modal once finished
                 resolve(password);
             };
 
-            passwordForm.addEventListener('submit', handler);
-            passwordModal.show();
+            passwordForm.addEventListener('submit', handler); //attach the handler
+            passwordModal.show(); //show the modal
         });
     }
 
-    async showMessageModal(message) {
+    async showMessageModal(message) { //function for showing stylized message modal
         console.log('showMessageModal called');
         return new Promise((resolve) => {
-            const messageModal = new bootstrap.Modal(document.getElementById('messageModal'));
-            const messageText = document.getElementById('messageModalText');
-            const okButton = document.getElementById('messageModalOkButton');
-            messageText.textContent = message;
+            const messageModal = new bootstrap.Modal(document.getElementById('messageModal')); //get the message modal
+            const messageText = document.getElementById('messageModalText'); //get the text element
+            const okButton = document.getElementById('messageModalOkButton'); //get the ok button
+            messageText.textContent = message; //populate the modal text with the passed message
 
             const handler = () => {
                 okButton.removeEventListener('click', handler);
                 messageModal.hide();
                 resolve();
             };
-            okButton.addEventListener('click', handler);
-            messageModal.show();
+            okButton.addEventListener('click', handler); //attach the handler
+            messageModal.show(); //show the modal
         });
     }
 
-    async showPromptModal(promptMessage) {
+    async showPromptModal(promptMessage) { //function for showing stylized prompt modal
         console.log('showPromptModal called');
         return new Promise((resolve) => {
-            const promptModal = new bootstrap.Modal(document.getElementById('promptModal'));
-            const promptForm = document.getElementById('promptForm');
-            const promptInput = document.getElementById('promptInput');
-            const promptTitle = document.getElementById('promptModalTitle');
-            promptTitle.textContent = promptMessage;
+            const promptModal = new bootstrap.Modal(document.getElementById('promptModal')); //get the prompt modal
+            const promptForm = document.getElementById('promptForm'); //get the form element
+            const promptInput = document.getElementById('promptInput'); //get the input element
+            const promptTitle = document.getElementById('promptModalTitle'); //get the title element
+            promptTitle.textContent = promptMessage; //populate the modal test with the passed message
             promptInput.value = '';
 
-            const handler = (e) => {
+            const handler = (e) => { //handler for the submission after prompt
                 e.preventDefault();
-                const value = promptInput.value.trim();
-                promptForm.removeEventListener('submit', handler);
-                promptModal.hide();
+                const value = promptInput.value.trim(); //trim the user's input
+                promptForm.removeEventListener('submit', handler); //remove the handler after submission
+                promptModal.hide(); //hide the prompt modal
                 resolve(value);
             }
-            promptForm.addEventListener('submit', handler);
-            promptModal.show();
+            promptForm.addEventListener('submit', handler); //attach the handler
+            promptModal.show(); //show the modal
         })
     }
 }

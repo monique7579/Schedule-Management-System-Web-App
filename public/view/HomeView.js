@@ -36,7 +36,7 @@ export class HomeView extends AbstractView {
         const right = this.buildEventColumn(); //call function to render event column, the right column
         viewWrapper.appendChild(right); //append right column to "master" view
 
-        this.addMsgModals(viewWrapper); //call function to create popup modals for alerts
+        this.addMsgModals(viewWrapper); //call function to style popup modals for alerts
 
         return viewWrapper; //return the "master" view, will be rendered in super class render()
     }

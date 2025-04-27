@@ -426,43 +426,44 @@ export class HomeController {
         }
     }
 
+    // function to show styled message modal with custom message
     async showMessageModal(message) {
         return new Promise((resolve) => {
-            const messageModal = new bootstrap.Modal(document.getElementById('messageModal'));
-            const messageText = document.getElementById('messageModalText');
-            const okButton = document.getElementById('messageModalOkButton');
-            messageText.textContent = message;
-            const handler = () => { s
-                okButton.removeEventListener('click', handler);
-                messageModal.hide();
+            const messageModal = new bootstrap.Modal(document.getElementById('messageModal')); //grab message modal
+            const messageText = document.getElementById('messageModalText'); //grab text element inside modal
+            const okButton = document.getElementById('messageModalOkButton'); //grab ok button inside modal
+            messageText.textContent = message; //set text of the modal to the passed message
+            const handler = () => { //handle ok button click
+                okButton.removeEventListener('click', handler); //remove event listener once clicked
+                messageModal.hide(); //hide modal
                 resolve();
             };
-            okButton.addEventListener('click', handler);
-            messageModal.show();
+            okButton.addEventListener('click', handler); //attach listener
+            messageModal.show(); 
         })
     }
 
     async showConfirmModal(message) {
         // console.log('showConfirmModal called (home)');
         return new Promise((resolve) => {
-            const confirmModal = new bootstrap.Modal(document.getElementById('confirmModal'));
-            const confirmText = document.getElementById('confirmModalText');
-            const confirmButton = document.getElementById('confirmModalConfirmButton');
-            const cancelButton = document.getElementById('confirmModalCancelButton');
-            confirmText.textContent = message;
-            const onConfirm = () => {
-                confirmButton.removeEventListener('click', onConfirm);
+            const confirmModal = new bootstrap.Modal(document.getElementById('confirmModal')); //grab confirmation modal
+            const confirmText = document.getElementById('confirmModalText'); //grab text element inside modal
+            const confirmButton = document.getElementById('confirmModalConfirmButton'); //grab confirm button inside modal
+            const cancelButton = document.getElementById('confirmModalCancelButton'); //grab cancel button inside modal
+            confirmText.textContent = message; //set text of the modal to the passed message
+            const onConfirm = () => { //handle confirmation button click
+                confirmButton.removeEventListener('click', onConfirm); //remove event listeners once clicked
                 cancelButton.removeEventListener('click', onCancel);
                 confirmModal.hide();
                 resolve(true);
             };
-            const onCancel = () => {
-                confirmButton.removeEventListener('click', onConfirm);
+            const onCancel = () => { //handle cancel button click
+                confirmButton.removeEventListener('click', onConfirm); //remove event listeners once clicked
                 cancelButton.removeEventListener('click', onCancel);
                 confirmModal.hide();
                 resolve(false);
             };
-            confirmButton.addEventListener('click', onConfirm);
+            confirmButton.addEventListener('click', onConfirm); //attach listeners
             cancelButton.addEventListener('click', onCancel);
             confirmModal.show();
         });
