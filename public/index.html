@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>App Template</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<<<<<<< HEAD
+    <!-- <link rel="stylesheet" href="indexStyles.css"> -->
+    <link rel="stylesheet" href="./view/templates/homeStyles.css">
+
+
+=======
+    <link rel="stylesheet" href="indexStyles.css">
+>>>>>>> f5a810e3b892286ece1a610fc3b5a6d2147a2cee
+  <script type="module" src="./controller/app.js"></script>
+</head>
+
+<body>
+  <!-- sprinning overlay as progress indicator  //z index to overlap--> 
+  <div id="spinnerOverlay" style="z-index: 1100"
+    class="d-none position-fixed top-0 start-0 w-100 h-100 d-flex justify-content-center align-items-center">
+    <div class="spinner-border text-primary" role="status" style="width: 100px; height: 100px;"></div>
+  </div>
+
+  <!-- <div class="container">
+    <h1 id="appHeader" class="mt-3 text-white text-center bg-primary">App Template</h1>
+  </div> -->
+
+  <!--Navigation Menu-->
+  <div id="navMenuContainer" class="container d-none">
+    <nav class="navbar navbar-expand-lg">
+<<<<<<< HEAD
+      <div class="container-fluid nav-container">
+=======
+      <div class="container-fluid">
+>>>>>>> f5a810e3b892286ece1a610fc3b5a6d2147a2cee
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+          aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button> <!--to collapse menu to button-->
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <li class="nav-item">
+              <a class="btn btn-clay me-3" data-path="/" aria-current="page">Home</a>
+            </li>
+<<<<<<< HEAD
+            <li class="nav-item">
+              <a class="btn btn-clay me-3" data-path="/event-search">Events</a>
+            </li>
+          </ul>
+          <!-- Profile Button Dropdown -->
+          <div class="dropdown ms-auto profile-button">
+=======
+            <!-- <li class="nav-item">
+              <a class="btn btn-outline-primary me-3" data-path="/profile">Profile</a>
+            </li> -->
+          </ul>
+          <!-- Profile Button Dropdown -->
+          <div class="dropdown ms-auto">
+>>>>>>> f5a810e3b892286ece1a610fc3b5a6d2147a2cee
+            <button class="btn btn-clay rounded-circle d-flex align-items-center justify-content-center" 
+                    type="button" id="profileDropdown" 
+                    data-bs-toggle="dropdown" aria-expanded="false"
+                    style="width: 40px; height: 40px; padding: 0;">
+              <i class="bi bi-person-fill"></i> <!-- Bootstrap icon -->
+            </button>
+<<<<<<< HEAD
+            <ul class="dropdown-menu dropdown-menu-end profile-dropdown" aria-labelledby="profileDropdown">
+              <li><a class="dropdown-item" data-path="/profile">Profile</a></li>
+              <!-- <li><a class="dropdown-item" href="/settings">Settings</a></li> -->
+=======
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
+              <li><a class="dropdown-item" data-path="/profile">Profile</a></li>
+              <li><a class="dropdown-item" href="/settings">Settings</a></li>
+>>>>>>> f5a810e3b892286ece1a610fc3b5a6d2147a2cee
+              <li><hr class="dropdown-divider"></li>
+              <li><button id="logoutButton" class="dropdown-item text-danger">Logout</button></li>
+            </ul>
+          </div>
+          <!-- <button id="logoutButton" class="btn btn-danger">Logout</button> -->
+        </div>
+      </div>
+    </nav>
+  </div>
+
+<<<<<<< HEAD
+ 
+
+  <div id="authContainer" class="container">
+=======
+  <div class="container">
+>>>>>>> f5a810e3b892286ece1a610fc3b5a6d2147a2cee
+    <div id="loginDiv" class="card p-4 shadow d-block">
+      <h1>Login</h1>
+      <form name="loginForm">
+        <div class="mb-3">
+          <label class="form-label">Email</label>
+          <input name="email" type="email" class="form-control" required 
+          aria-describedby="emailHelp" placeholder="Enter email">
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Password</label>
+          <input name="password" type="password" class="form-control" minlength = "6" required
+           placeholder="Enter password">
+        </div>
+        <button type="submit" class="btn btn-clay">Enter</button>
+      </form>
+      <button id="goToCreateAccount" class="btn btn-outline-danger mt-3">Go To Create Account Form</button>
+    </div>
+
+    <div id="createAccountDiv" class="card p-4 shadow d-none">
+      <h1>Create a New Account</h1>
+      <form name="createAccountForm">
+        <div class="mb-3">
+          <label class="form-label">Email</label>
+          <input name="email" type="email" class="form-control" required 
+          aria-describedby="emailHelp" placeholder="Enter email">
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Confrim Email</label>
+          <input name="emailConfirm" type="email" class="form-control" required 
+          aria-describedby="emailHelp" placeholder="Confirm email">
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Password</label>
+          <input name="password" type="password" class="form-control" minlength = "6" required
+           placeholder="Enter password">
+        </div>
+        <button type="submit" class="btn btn-clay">Create</button>
+      </form>
+      <button id="goToLogin" class="btn btn-outline-danger mt-3">Go To Login Form</button>
+    </div>
+  </div>
+
+  <!-- Single Page Application Root -->
+  <div id="spaRoot" class="container d-none">Single Page Application</div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+    crossorigin="anonymous"></script>
+</body>
+
+</html>
