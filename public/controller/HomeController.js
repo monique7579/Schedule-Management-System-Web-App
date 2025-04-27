@@ -177,7 +177,7 @@ export class HomeController {
         const form = document.forms.formEditEvent; //grab the edit event form
         form.title.value = event.title; //set the title value in form the event title from model
         form.description.value = event.description; //set description value in form to the event description from model
-        this.selectCategoryByText(event.category); //selects the correct category from dropdown based on event category
+        form.selectCategoryByText(event.category); //selects the correct category from dropdown based on event category
         form.start.value = event.start; //match start value to model
         form.finish.value = event.finish; //match finish value to one grabbed from model
         form.reminderBool.value = event.reminderBool; //match reminder check
@@ -411,6 +411,11 @@ export class HomeController {
         try {
             await deleteCategory(category.docId); //call function that deletes from database
             this.model.deleteCategoryByDocId(category.docId); //delete from model
+            //testing, need to reload events because they have been edited
+            const eventList = await getEventList(currentUser.uid); //call firestore side to grab events from database
+            this.model.setEventList(eventList); //update model to match
+            this.model.orderEventListByStartTime(); //order events in model by time
+            //testing
             stopSpinner();
             this.view.render(); //render view to match
         } catch (e) { //handle error
