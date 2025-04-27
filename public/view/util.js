@@ -5,6 +5,7 @@ export function startSpinner() {
 export function stopSpinner() {
     document.getElementById('spinnerOverlay').classList.add("d-none");
 }
+<<<<<<< HEAD
 //use spinner when using await calls cause we are assuming they take a while
 
 // Function to send reminder emails using SendGrid API
@@ -41,3 +42,6 @@ export async function sendReminderEmail(toEmail, subject, text, html) {
         console.error("Error sending reminder:", error);
     }
 }
+=======
+//use spinner when using await calls cause we are assuming they take a while
+>>>>>>> f5a810e3b892286ece1a610fc3b5a6d2147a2cee

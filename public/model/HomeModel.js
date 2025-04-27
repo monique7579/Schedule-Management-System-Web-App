@@ -1,4 +1,5 @@
 export class HomeModel {
+<<<<<<< HEAD
     categoryList = []; //model needs to remember the categories
     eventList = []; //and the events
 
@@ -101,4 +102,7 @@ export class HomeModel {
         }
         return false;
     }
+=======
+   
+>>>>>>> f5a810e3b892286ece1a610fc3b5a6d2147a2cee
 }

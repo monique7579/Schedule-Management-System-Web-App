@@ -5,17 +5,24 @@ import { ProfileController } from "./ProfileController.js";
 import { Router } from "./Router.js";
 import {createAccount, loginFirebase, logoutFirebase} from './firebase_auth.js'
 import { startSpinner, stopSpinner } from "../view/util.js";
+<<<<<<< HEAD
 import { EventSearchView } from "../view/EventSearchView.js"
 import { EventSearchController } from "../controller/EventSearchController.js"
 
+=======
+>>>>>>> f5a810e3b892286ece1a610fc3b5a6d2147a2cee
 
 // document.getElementById('appHeader').textContent = 'Aurgury App'; //changes element between ><
 document.title = 'Augury'; //changes title
 
 const routes = [
     {path: '/', view: HomeView, controller: HomeController},
+<<<<<<< HEAD
     {path: '/profile', view: ProfileView, controller: ProfileController},
     {path: '/event-search', view: EventSearchView, controller: EventSearchController },
+=======
+    {path: '/profile', view: ProfileView, controller: ProfileController}
+>>>>>>> f5a810e3b892286ece1a610fc3b5a6d2147a2cee
 ];
 
 //create an instance of Router

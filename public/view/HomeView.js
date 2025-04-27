@@ -7,14 +7,21 @@ export class HomeView extends AbstractView {
     constructor(controller) {
         super(); //keyword super is required before this.---
         this.controller = controller;
+<<<<<<< HEAD
         this.currentDate = new Date(); //multiple things need access to this
     }
 
     async onMount() { //function called as part of render
+=======
+    }
+
+    async onMount() {
+>>>>>>> f5a810e3b892286ece1a610fc3b5a6d2147a2cee
         if (!currentUser) {
             this.parentElement.innerHTML = '<h1>Access Denied</h1>';
             return;
         }
+<<<<<<< HEAD
         await this.controller.onLoadCategoryList(); //when you open it up you need the categories to display and 
         await this.controller.onLoadEventList(); //the events to display
         console.log('HomeView.onMount() called');
@@ -498,6 +505,26 @@ export class HomeView extends AbstractView {
                 select.disabled = !checkbox.checked;
             });
         }
+=======
+        console.log('HomeView.onMount() called');
+    }
+
+    async updateView() {
+        console.log('HomeView.updateView() called');
+        const viewWrapper = document.createElement('div');
+        const response = await fetch('/view/templates/home.html', {cache: 'no-store'}); //to use await functin must be async
+        viewWrapper.innerHTML = await response.text();
+
+        // const nav = viewWrapper.querySelector('nav');
+        
+
+        return viewWrapper;
+    }
+
+    attachEvents() {
+        // console.log('HomeView.attachEvents() called');
+        
+>>>>>>> f5a810e3b892286ece1a610fc3b5a6d2147a2cee
     }
 
     async onLeave() {

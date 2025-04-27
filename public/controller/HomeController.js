@@ -1,4 +1,5 @@
 import { HomeModel } from "../model/HomeModel.js";
+<<<<<<< HEAD
 import { Event } from '../model/Event.js';
 import { Category } from '../model/Category.js';
 import { currentUser } from './firebase_auth.js';
@@ -8,6 +9,8 @@ import { getFirestore, collection, query, where, getDocs, deleteDoc } from "http
 import { app } from './firebase_core.js';
 
 const db = getFirestore(app);
+=======
+>>>>>>> f5a810e3b892286ece1a610fc3b5a6d2147a2cee
 
 export const glHomeModel = new HomeModel();
 
@@ -18,6 +21,7 @@ export class HomeController {
 
     constructor() {
         this.model = glHomeModel;
+<<<<<<< HEAD
         //VERY IMPORTANT: binds "this" properly
         this.onSubmitAddEvent = this.onSubmitAddEvent.bind(this);
         this.onSubmitAddCategory = this.onSubmitAddCategory.bind(this);
@@ -29,10 +33,14 @@ export class HomeController {
         this.onRightClickCategoryCheck = this.onRightClickCategoryCheck.bind(this);
         this.onClickEditButton = this.onClickEditButton.bind(this);
         this.onClickDeleteButton = this.onClickDeleteButton.bind(this);
+=======
+        // this.onClickGenerateDataButton = this.onClickGenerateDataButton.bind(this); //function is bound to this current object instead of event source
+>>>>>>> f5a810e3b892286ece1a610fc3b5a6d2147a2cee
     }
 
     setView(view) {
         this.view = view;
+<<<<<<< HEAD
         this.startReminderCheck();
     }
     
@@ -502,4 +510,9 @@ export class HomeController {
     //to do: define listeners for all interact-able components in home view, they will call a corresponding
     //function from firestore_controller.js in a try catch block
     //note: these are the functions that are attached to buttons in HomeView.js attachEvents()
+=======
+    }
+
+    
+>>>>>>> f5a810e3b892286ece1a610fc3b5a6d2147a2cee
 }

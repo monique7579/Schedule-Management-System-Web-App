@@ -4,7 +4,11 @@ import {
     signOut,
     onAuthStateChanged,
     createUserWithEmailAndPassword,
+<<<<<<< HEAD
 } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-auth.js"
+=======
+} from "https://www.gstatic.com/firebasejs/11.3.1/firebase-auth.js"
+>>>>>>> f5a810e3b892286ece1a610fc3b5a6d2147a2cee
 
 import { app } from './firebase_core.js'
 import { router } from "./app.js";
@@ -26,6 +30,7 @@ export async function logoutFirebase() {
 
 onAuthStateChanged(auth, user => {
     currentUser = user;
+<<<<<<< HEAD
     const authContainer = document.getElementById('authContainer');
     const loginDiv = document.getElementById('loginDiv');
     const navMenu = document.getElementById('navMenuContainer');
@@ -45,6 +50,25 @@ onAuthStateChanged(auth, user => {
         spaRoot.classList.replace('d-block','d-none');
         authContainer.style.display = 'block'; //temp fix, tweak as needed
 
+=======
+    if(user) {
+        console.log('Authstate changed: User logged in', user.email);
+        const loginDiv = document.getElementById('loginDiv');
+        loginDiv.classList.replace('d-block','d-none');
+        const navMenu = document.getElementById('navMenuContainer');
+        navMenu.classList.replace('d-none','d-block');
+        const spaRoot = document.getElementById('spaRoot');
+        spaRoot.classList.replace('d-none','d-block');
+        router.navigate(window.location.pathname);
+    } else {
+        console.log('Authstate changed: User logged out');
+        const loginDiv = document.getElementById('loginDiv');
+        loginDiv.classList.replace('d-none','d-block');
+        const navMenu = document.getElementById('navMenuContainer');
+        navMenu.classList.replace('d-block','d-none');
+        const spaRoot = document.getElementById('spaRoot');
+        spaRoot.classList.replace('d-block','d-none');
+>>>>>>> f5a810e3b892286ece1a610fc3b5a6d2147a2cee
         router.currentView = null;
         spaRoot.innerHTML = ''; //cleared view since we are signing out
         // glHomeModel.reset(); //reset when sign out

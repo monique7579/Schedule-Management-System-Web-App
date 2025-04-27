@@ -1,6 +1,11 @@
+<<<<<<< HEAD
 
 /* .btn-clay {
    
+=======
+.btn-clay {
+    /* background-color: #cc9674;  */
+>>>>>>> f5a810e3b892286ece1a610fc3b5a6d2147a2cee
     border-color: #cc9674; 
     color: #cc9674;
 }
@@ -34,6 +39,10 @@ body {
     color: #fff;
     display: flex;
     border-radius: 10px;
+<<<<<<< HEAD
+=======
+    /* bg color? */
+>>>>>>> f5a810e3b892286ece1a610fc3b5a6d2147a2cee
 }
 .left {
     width: 60%;
@@ -109,6 +118,7 @@ body {
 .calendar .day:not(.prev-date, .next-date):hover {
     color: #fff;
     background-color: var(--primary-color);
+<<<<<<< HEAD
 }
 .calendar .days .prev-date,
 .calendar .days .nex-date {
@@ -139,3 +149,6 @@ body {
   }
 
  */
+=======
+}
+>>>>>>> f5a810e3b892286ece1a610fc3b5a6d2147a2cee

@@ -1,5 +1,9 @@
 // Import the functions you need from the SDKs you need
+<<<<<<< HEAD
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-app.js";
+=======
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-app.js";
+>>>>>>> f5a810e3b892286ece1a610fc3b5a6d2147a2cee
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
