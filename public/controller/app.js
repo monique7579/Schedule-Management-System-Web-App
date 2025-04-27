@@ -3,7 +3,7 @@ import { ProfileView } from "../view/ProfileView.js";
 import { HomeController } from "./HomeController.js";
 import { ProfileController } from "./ProfileController.js";
 import { Router } from "./Router.js";
-import {createAccount, loginFirebase, logoutFirebase} from './firebase_auth.js'
+import { createAccount, loginFirebase, logoutFirebase } from './firebase_auth.js'
 import { startSpinner, stopSpinner } from "../view/util.js";
 import { EventSearchView } from "../view/EventSearchView.js"
 import { EventSearchController } from "../controller/EventSearchController.js"
@@ -56,6 +56,12 @@ document.getElementById('logoutButton').onclick = async function(e) {
         await logoutFirebase();
         stopSpinner();
         console.log('user logged out');
+
+        // clear the data from the login form once user logs out
+        const loginForm = document.forms.loginForm;
+        if (loginForm) {
+            loginForm.reset();
+        }
     } catch (e) {
         stopSpinner();
         console.error('Error logging out: ', e);
